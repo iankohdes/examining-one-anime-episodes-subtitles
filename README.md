@@ -8,9 +8,9 @@ The episode may, on occasion, also be referred to as a **corpus**.
 
 For this test project, we retrieve subtitles for the first episode of [_Psycho-Pass_ (season 1)](https://en.wikipedia.org/wiki/Psycho-Pass), available on `jimaku.cc`. [This is the download link.](https://jimaku.cc/entry/1407/download/Psycho-Pass.S01E01.WEBRip.Netflix.ja%5Bcc%5D.srt)
 
-[Wikipedia](https://en.wikipedia.org/wiki/Psycho-Pass) describes _Psycho-Pass_ as a ‘cyberpunk psychological thriller’ set in a dystopian Japanese society. The series is particularly violent (I would venture to say that it’s needlessly so) and doesn’t contain much – or any – of the exaggerated speech patterns that Japanese anime series are known for.
+[Wikipedia](https://en.wikipedia.org/wiki/Psycho-Pass) describes _Psycho-Pass_ as a ‘cyberpunk psychological thriller’ set in a dystopian Japanese society. The series is particularly violent and, being rather serious (or depressive?) in tone, doesn’t contain much of the exaggerated speech patterns that Japanese anime series are famed for.
 
-Perhaps there might be _some_ of such speech from the protagonist in the first episode, as she’s a rookie, but – mild spoiler alert here – as the series progresses, and in the latter series, all that new-hire joy is replaced by a brooding seriousness. Quite similar to real life, then.
+Perhaps there might be _some_ of such speech from the protagonist in the first episode, as she’s a rookie, but – mild spoiler alert here – as the series progresses, and in the latter series, all that new-hire enthusiasm is replaced by a brooding seriousness. Quite similar to real life, then.
 
 ## Structure of a subtitle file
 
@@ -72,6 +72,8 @@ As mentioned above, we will use the `.srt` file for S01E01 of _Psycho-Pass_ as o
 - _Kyōiku_ kanji (list of 1,026 kanji characters that students learn in primary school; for each of the six years of primary school, there is a set list of kanji that students must learn, and the JSON file containing the _kyōiku_ kanji reflects this in its structure)
 - _Jinmeiyō_ kanji (list of characters for use in personal names)
 
-The kana syllabaries also contain variations of the characters. These have diacratics or are part of digraphs. The _jōyō_ and _jinmeiyō_ kanji lists are compiled by the Japanese Ministry of Education.
+The kana syllabaries also contain variations of the characters. These have diacritics or are part of digraphs. The _jōyō_ and _jinmeiyō_ kanji lists are compiled by the Japanese Ministry of Education.
 
-There is an **additional list of kanji characters** that is defined by its absence. The _hyōgai_ kanji refers to characters that are found in neither the _jōyō_ nor _jinmeiyō_ kanji lists. This set of kanji characters, if considered in its entirety, contains over 40,000 characters. A reasonable assumption one might make is that, the higher the percentage _hyōgai_ characters in the subtitles (and thus the overall dialogue), the more ‘adult’ an anime series is. 
+There is an **additional list of kanji characters** that is defined by its absence. The _hyōgai_ kanji refers to characters that are found in neither the _jōyō_ nor _jinmeiyō_ kanji lists.
+
+This set of kanji characters, if considered in its entirety, contains over 40,000 characters. A reasonable assumption one might make is that, the higher the percentage _hyōgai_ characters in the subtitles (and thus the overall dialogue), the more adult-orientated an anime series is.
