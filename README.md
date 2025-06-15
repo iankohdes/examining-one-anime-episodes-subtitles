@@ -73,3 +73,5 @@ As mentioned above, we will use the `.srt` file for S01E01 of _Psycho-Pass_ as o
 - _Jinmeiyō_ kanji (list of characters for use in personal names)
 
 The kana syllabaries also contain variations of the characters. These have diacratics or are part of digraphs. The _jōyō_ and _jinmeiyō_ kanji lists are compiled by the Japanese Ministry of Education.
+
+There is an **additional list of kanji characters** that is defined by its absence. The _hyōgai_ kanji refers to characters that are found in neither the _jōyō_ nor _jinmeiyō_ kanji lists. This set of kanji characters, if considered in its entirety, contains over 40,000 characters. A reasonable assumption one might make is that, the higher the percentage _hyōgai_ characters in the subtitles (and thus the overall dialogue), the more ‘adult’ an anime series is. 
