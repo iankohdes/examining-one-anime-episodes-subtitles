@@ -43,3 +43,7 @@ I’ve not got much of an attachment to any of the options, so I’ll make a dec
 **yo**  
 よょ  
 ヨョ
+
+**wa**
+わゎ
+ワヮ
