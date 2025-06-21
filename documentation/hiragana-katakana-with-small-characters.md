@@ -44,6 +44,6 @@ I’ve not got much of an attachment to any of the options, so I’ll make a dec
 よょ  
 ヨョ
 
-**wa**
-わゎ
+**wa**  
+わゎ  
 ワヮ
