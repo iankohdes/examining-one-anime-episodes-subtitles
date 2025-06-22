@@ -8,7 +8,7 @@ fn main() {
     println!("（ as u32: {left1}\n( as u32: {left2}\n");
 
     /*
-    Small hiragana from the a-column (i.e. consonants paired with the ‘a’ sound
+    Small hiragana from the a-column (i.e. consonants paired with the ‘a’ sound)
     are long vowel markers, similar to ー.
      */
     let small_a = 'ぁ' as u32;

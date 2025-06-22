@@ -76,4 +76,4 @@ The kana syllabaries also contain variations of the characters. These have diacr
 
 There is an **additional list of kanji characters** that is defined by its absence. The _hyōgai_ kanji refers to characters that are found in neither the _jōyō_ nor _jinmeiyō_ kanji lists.
 
-This set of kanji characters, if considered in its entirety, contains over 40,000 characters. A reasonable assumption one might make is that, the higher the percentage _hyōgai_ characters in the subtitles (and thus the overall dialogue), the more adult-orientated an anime series is.
+This set of kanji characters, if considered in its entirety, contains over 40,000 characters. A reasonable assumption one might make is that, the higher the percentage of _hyōgai_ characters in the subtitles (and thus the overall dialogue), the more adult-orientated an anime series is likely to be.
