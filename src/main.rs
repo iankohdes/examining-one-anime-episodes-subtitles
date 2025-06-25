@@ -64,6 +64,7 @@ fn convert_mini_kana_to_regular(
     //! Use this together with the `ingest_mini_kana_mappings` function to create
     //! the hash map that will be used as the second argument. The hash map is
     //! also passed to `mini_kana_character_to_regular` as a parameter.
+    
     let converted_input: String = input
         .chars()
         .map(|x| mini_kana_character_to_regular(&x, kana_mapping))
