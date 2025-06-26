@@ -15,8 +15,8 @@ pub fn helper_dedupe_and_sort(xs: &str) {
     //!   preceding it)
     //!
     //! _Chōonpu_ usually come after katakana characters and rarely after
-    //! hiragana ones. I remove them because they convey no new additional
-    //! information.
+    //! hiragana ones. I remove them because they convey no additional
+    //! information about existing characters in a subtitle unit.
     //!
     //! The point of sorting is to (hopefully!) cluster unwanted characters
     //! away from kanji, hiragana and katakana.
