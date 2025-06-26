@@ -56,15 +56,15 @@ fn ingest_mini_kana_mappings() -> Result<HashMap<SmallKana, RegularKana>, Box<dy
 
 fn convert_mini_kana_to_regular(
     input: &str,
-    kana_mapping: &HashMap<SmallKana, RegularKana>
+    kana_mapping: &HashMap<SmallKana, RegularKana>,
 ) -> String {
     //! **String-level** cleaning function that maps `mini_kana_character_to_regular`
     //! to every `char` in the input.
-    //! 
+    //!
     //! Use this together with the `ingest_mini_kana_mappings` function to create
     //! the hash map that will be used as the second argument. The hash map is
     //! also passed to `mini_kana_character_to_regular` as a parameter.
-    
+
     let converted_input: String = input
         .chars()
         .map(|x| mini_kana_character_to_regular(&x, kana_mapping))
@@ -75,7 +75,7 @@ fn convert_mini_kana_to_regular(
 
 fn mini_kana_character_to_regular(
     input: &char,
-    kana_mapping: &HashMap<SmallKana, RegularKana>
+    kana_mapping: &HashMap<SmallKana, RegularKana>,
 ) -> char {
     //! **Character-level** cleaning function that transforms a kana character
     //! into its regular size if it’s found to be a small version, and returns
