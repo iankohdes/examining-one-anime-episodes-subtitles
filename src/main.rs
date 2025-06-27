@@ -36,9 +36,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect();
     let subtitles_concat = subtitles.join("");
 
-    let cleaned_subtitles = clean_subtitles(&subtitles_concat)?;
+    let raw_test = "♪～（狡噛(こうがみ)）フウ～…（狡噛）うつ…！ぉ";
+    let directly_cleaned_subtitles: String = raw_test.chars().filter(|x| !"()01269―…♪！（）１２３４？ＫＴ～･".contains(*x)).collect();
+    let cleaned_subtitles = clean_subtitles(raw_test)?;
 
-    println!("{subtitles_concat}\n{cleaned_subtitles}");
+    println!("Raw:\n{raw_test}\n\nDirectly cleaned:\n{directly_cleaned_subtitles}\n\nUsing clean_subtitles:\n{cleaned_subtitles}");
 
     Ok(())
 }
