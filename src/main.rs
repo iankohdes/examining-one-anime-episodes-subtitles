@@ -4,7 +4,7 @@
 
 mod dataprep;
 
-use dataprep::cleaning::{helper_dedupe_and_sort};
+use dataprep::cleaning::{clean_subtitles, helper_dedupe_and_sort};
 use std::collections::{BTreeSet, HashMap};
 use std::fs;
 use std::fs::File;
@@ -35,6 +35,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .flat_map(|x| get_subtitles_from_unit(x))
         .collect();
     let subtitles_concat = subtitles.join("");
+
+    let cleaned_subtitles = clean_subtitles(&subtitles_concat)?;
+
+    println!("{subtitles_concat}\n{cleaned_subtitles}");
 
     Ok(())
 }

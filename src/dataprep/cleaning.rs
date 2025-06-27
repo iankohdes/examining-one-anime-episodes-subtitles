@@ -13,24 +13,22 @@ struct SmallKana(char);
 #[derive(Deserialize, Eq, PartialEq, Hash, Debug)]
 struct RegularKana(char);
 
-/// Newtype representing an unwanted character as uncovered by the application
-/// of [`helper_dedupe_and_sort`].
-#[derive(Deserialize, Debug)]
-struct UnwantedChar(char);
-
 const MINI_KANA_JSON_PATH: &'static str = "data/raw/mini_kana_mappings.json";
 const UNWANTED_CHARACTERS_PATH: &'static str = "data/raw/unwanted_characters.txt";
 
-// pub fn clean_subtitles(raw_input: &str) -> String {
-//     let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
-//         ingest_json_file(MINI_KANA_JSON_PATH)?;
-// 
-//     let unwanted_characters_raw = fs::read_to_string(UNWANTED_CHARACTERS_PATH)?;
-//     let unwanted_characters: HashSet<UnwantedChar> =
-//         unwanted_characters_raw.collect();
-// 
-//     todo!()
-// }
+pub fn clean_subtitles(raw_input: &str) -> Result<String, dyn std::error::Error> {
+    let unwanted_characters_raw = fs::read_to_string(UNWANTED_CHARACTERS_PATH)?;
+    let unwanted_characters: HashSet<char> =
+        unwanted_characters_raw.chars().collect();
+
+    let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
+        ingest_json_file(MINI_KANA_JSON_PATH)?;
+
+    let output_value = clean_ingested_subtitles(raw_input, &unwanted_characters, &mini_kana_mappings);
+    output_value;
+
+    Ok(output_value)
+}
 
 pub fn helper_dedupe_and_sort(xs: &str) {
     //! Deduplicates a string and sorts its characters, then **prints the result**.
@@ -62,36 +60,49 @@ pub fn helper_dedupe_and_sort(xs: &str) {
     println!("{deduped_and_sorted}");
 }
 
-fn clean_at_character_level(
+fn clean_ingested_subtitles(
     input: &str,
+    char_blacklist: &HashSet<char>,
     kana_mapping: &HashMap<SmallKana, RegularKana>,
 ) -> String {
-    //! Applies **character-level** cleaning functions to a string of subtitle
-    //! text. These are the two character-level cleaning operations:
-    //!
-    //! - Remove unwanted characters (punctuation, spaces, non-Japanese characters,
-    //!   [_chōonpu_](https://en.wikipedia.org/wiki/Ch%C5%8Donpu))
-    //! - Convert small kana (or [sokuon](https://en.wikipedia.org/wiki/Sokuon))
-    //!   to their regular-sized variants
+    let unwanted_characters_removed = remove_unwanted_characters(input, char_blacklist);
 
-    let converted_input: String = input
+    let small_kana_converted_to_regular: String = input
         .chars()
         .map(|x| convert_mini_kana_to_regular(&x, kana_mapping))
         .collect();
 
-    converted_input
+    small_kana_converted_to_regular
+}
+
+fn remove_unwanted_characters(
+    input: &str,
+    char_blacklist: &HashSet<char>,
+) -> String {
+    //! Filters out characters in the file accessed by [`UNWANTED_CHARACTERS_PATH`].
+    //!
+    //! Unwanted characters include:
+    //!
+    //! - Punctuation and spaces
+    //! - Numbers and non-Japanese characters
+    //! - _Chōonpu_
+    //!
+    //! Apply this function **before** [`convert_mini_kana_to_regular`].
+
+    input.chars().filter(|x| !char_blacklist.contains(x)).collect()
 }
 
 fn convert_mini_kana_to_regular(
     input: &char,
     kana_mapping: &HashMap<SmallKana, RegularKana>,
 ) -> char {
-    //! **Character-level** cleaning function that transforms a kana character
-    //! into its regular size if it’s found to be a small version, and returns
-    //! the input unchanged otherwise.
+    //! Transforms a kana character into its regular size if it’s found to be a
+    //! small version, and returns the input unchanged otherwise.
     //!
     //! Small kana versions indicate digraphs, lengthened vowels or the presence
     //! of double consonants.
+    //!
+    //! Apply this function **after** [`remove_unwanted_characters`].
 
     let typed_input = SmallKana(*input);
 
