@@ -64,6 +64,14 @@ fn clean_ingested_subtitles(
     char_blacklist: &HashSet<char>,
     kana_mapping: &HashMap<SmallKana, RegularKana>,
 ) -> String {
+    //! Cleans an ingested subtitle string in the following order:
+    //!
+    //! - Remove parentheses and their contents
+    //! - Remove unwanted characters
+    //! - Convert mini-kana characters to their regular-sized counterparts
+    //!
+    //! After this step, the output is ready for **subtitle processing**.
+
     let unwanted_characters_removed = remove_unwanted_characters(input, char_blacklist);
 
     let small_kana_converted_to_regular: String = unwanted_characters_removed
