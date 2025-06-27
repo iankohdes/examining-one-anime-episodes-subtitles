@@ -20,7 +20,8 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Er
     //! Cleans an ingested subtitle string in the following order:
     //!
     //! - Remove parentheses and their contents
-    //! - Remove unwanted characters ([`remove_unwanted_characters`])
+    //! - Remove unwanted characters ([`remove_unwanted_characters`]; see also
+    //!   [`helper_dedupe_and_sort`] for a definition of unwanted characters)
     //! - Convert mini-kana characters to their regular-sized counterparts
     //!   ([`convert_mini_kana_to_regular`])
     //!
@@ -33,8 +34,10 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Er
     let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
         ingest_json_file(MINI_KANA_JSON_PATH)?;
 
-    let unwanted_characters_removed =
-        remove_unwanted_characters(raw_input, &unwanted_characters);
+    let unwanted_characters_removed: String = raw_input
+        .chars()
+        .filter(|x| !unwanted_characters.contains(x))
+        .collect();
 
     let small_kana_converted_to_regular: String = unwanted_characters_removed
         .chars()
@@ -72,23 +75,6 @@ pub fn helper_dedupe_and_sort(xs: &str) {
         .collect();
 
     println!("{deduped_and_sorted}");
-}
-
-fn remove_unwanted_characters(
-    input: &str,
-    char_blacklist: &HashSet<char>,
-) -> String {
-    //! Filters out characters in the file accessed by [`UNWANTED_CHARACTERS_PATH`].
-    //!
-    //! Unwanted characters include:
-    //!
-    //! - Punctuation and spaces
-    //! - Numbers and non-Japanese characters
-    //! - _Chōonpu_
-    //!
-    //! Apply this function **before** [`convert_mini_kana_to_regular`].
-
-    input.chars().filter(|x| !char_blacklist.contains(x)).collect()
 }
 
 fn convert_mini_kana_to_regular(
