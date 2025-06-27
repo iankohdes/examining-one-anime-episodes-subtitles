@@ -1,26 +1,36 @@
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeSet, HashMap, HashSet};
+use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use serde::Deserialize;
+use crate::dataprep::ingestion::ingest_json_file;
 
+/// Newtype representing the **keys** in the file accessed by [`MINI_KANA_JSON_PATH`].
 #[derive(Deserialize, Eq, PartialEq, Hash, Debug)]
-/// Newtype representing the **keys** in `mini_kana_mappings.json`.
 struct SmallKana(char);
 
-/// Newtype representing the _values_ in `mini_kana_mappings.json`.
+/// Newtype representing the _values_ in the file accessed by [`MINI_KANA_JSON_PATH`].
 #[derive(Deserialize, Eq, PartialEq, Hash, Debug)]
 struct RegularKana(char);
 
-/// Path to a JSON file containing the regular-to-small kana mappings for 10
-/// different sounds: _a_, _i_, _u_, _e_, _o_, _tsu_, _ya_, _yu_, _yo_, and _wa_.
-/// These sounds are represented by both **hiragana** and **katakana**
-/// syllabaries. The path’s lifetime lasts the entire program.
-const MINI_KANA_JSON_PATH: &'static str = "data/raw/mini_kana_mappings.json";
+/// Newtype representing an unwanted character as uncovered by the application
+/// of [`helper_dedupe_and_sort`].
+#[derive(Deserialize, Debug)]
+struct UnwantedChar(char);
 
-pub fn clean_subtitles(raw_input: &str) -> String {
-    let mini_kana_mappings = ingest_mini_kana_mappings()?;
-    todo!()
-}
+const MINI_KANA_JSON_PATH: &'static str = "data/raw/mini_kana_mappings.json";
+const UNWANTED_CHARACTERS_PATH: &'static str = "data/raw/unwanted_characters.txt";
+
+// pub fn clean_subtitles(raw_input: &str) -> String {
+//     let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
+//         ingest_json_file(MINI_KANA_JSON_PATH)?;
+// 
+//     let unwanted_characters_raw = fs::read_to_string(UNWANTED_CHARACTERS_PATH)?;
+//     let unwanted_characters: HashSet<UnwantedChar> =
+//         unwanted_characters_raw.collect();
+// 
+//     todo!()
+// }
 
 pub fn helper_dedupe_and_sort(xs: &str) {
     //! Deduplicates a string and sorts its characters, then **prints the result**.
@@ -52,30 +62,6 @@ pub fn helper_dedupe_and_sort(xs: &str) {
     println!("{deduped_and_sorted}");
 }
 
-fn ingest_mini_kana_mappings() -> Result<HashMap<SmallKana, RegularKana>, Box<dyn std::error::Error>> {
-    //! Takes no arguments and returns a `Result` of `HashMap<SmallKana,
-    //! RegularKana>` in the successful case and `Box<dyn std::error::Error>`
-    //! otherwise.
-    //!
-    //! The reason that `ingest_mini_kana_mappings` does not take an argument is
-    //! that it has only one possible input value: the `MINI_KANA_JSON_PATH`.
-    //!
-    //! Usage example:
-    //!
-    //! ```
-    //! fn main() -> Result<(), Box<dyn std::error::Error>> {
-    //!     let mini_kana_mappings = ingest_mini_kana_mappings()?;
-    //!     println!("{mini_kana_mappings:?}");
-    //!     Ok(())
-    //! }
-    //! ```
-
-    let io_file = File::open(MINI_KANA_JSON_PATH)?;
-    let buffer: BufReader<File> = BufReader::new(io_file);
-    let mini_kana_mappings: HashMap<SmallKana, RegularKana> = serde_json::from_reader(buffer)?;
-    Ok(mini_kana_mappings)
-}
-
 fn clean_at_character_level(
     input: &str,
     kana_mapping: &HashMap<SmallKana, RegularKana>,
@@ -90,13 +76,13 @@ fn clean_at_character_level(
 
     let converted_input: String = input
         .chars()
-        .map(|x| mini_kana_character_to_regular(&x, kana_mapping))
+        .map(|x| convert_mini_kana_to_regular(&x, kana_mapping))
         .collect();
 
     converted_input
 }
 
-fn mini_kana_character_to_regular(
+fn convert_mini_kana_to_regular(
     input: &char,
     kana_mapping: &HashMap<SmallKana, RegularKana>,
 ) -> char {
