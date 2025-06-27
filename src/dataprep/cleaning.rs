@@ -34,17 +34,13 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Er
     let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
         ingest_json_file(MINI_KANA_JSON_PATH)?;
 
-    let unwanted_characters_removed: String = raw_input
+    let unwanted_chars_removed_and_small_kana_as_regular: String = raw_input
         .chars()
-        .filter(|x| !unwanted_characters.contains(x))
+        .filter(|x: &char| !unwanted_characters.contains(x))
+        .map(|x: char| convert_mini_kana_to_regular(&x, &mini_kana_mappings))
         .collect();
 
-    let small_kana_converted_to_regular: String = unwanted_characters_removed
-        .chars()
-        .map(|x| convert_mini_kana_to_regular(&x, &mini_kana_mappings))
-        .collect();
-
-    Ok(small_kana_converted_to_regular)
+    Ok(unwanted_chars_removed_and_small_kana_as_regular)
 }
 
 pub fn helper_dedupe_and_sort(xs: &str) {
