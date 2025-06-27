@@ -7,7 +7,7 @@ use std::io::BufReader;
 use serde::de::DeserializeOwned;
 use anyhow::Result;
 
-pub fn ingest_json_file<T>(file_path: &'static str) -> Result<T>
+pub fn ingest_json_file<T>(file_path: &str) -> Result<T>
 where
     T: DeserializeOwned,
 {
@@ -20,5 +20,6 @@ where
     let io_file = File::open(file_path)?;
     let reader: BufReader<File> = BufReader::new(io_file);
     let data: T = serde_json::from_reader(reader)?;
+    
     Ok(data)
 }
