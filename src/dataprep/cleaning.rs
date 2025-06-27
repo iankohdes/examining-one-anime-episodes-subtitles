@@ -20,8 +20,9 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Er
     //! Cleans an ingested subtitle string in the following order:
     //!
     //! - Remove parentheses and their contents
-    //! - Remove unwanted characters
+    //! - Remove unwanted characters ([`remove_unwanted_characters`])
     //! - Convert mini-kana characters to their regular-sized counterparts
+    //!   ([`convert_mini_kana_to_regular`])
     //!
     //! After this step, the output is ready for **subtitle processing**.
 
