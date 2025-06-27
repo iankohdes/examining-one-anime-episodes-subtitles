@@ -16,7 +16,7 @@ struct RegularKana(char);
 const MINI_KANA_JSON_PATH: &'static str = "data/raw/mini_kana_mappings.json";
 const UNWANTED_CHARACTERS_PATH: &'static str = "data/raw/unwanted_characters.txt";
 
-pub fn clean_subtitles(raw_input: &str) -> Result<String, dyn std::error::Error> {
+pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Error>> {
     let unwanted_characters_raw = fs::read_to_string(UNWANTED_CHARACTERS_PATH)?;
     let unwanted_characters: HashSet<char> =
         unwanted_characters_raw.chars().collect();
@@ -25,7 +25,6 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, dyn std::error::Error>
         ingest_json_file(MINI_KANA_JSON_PATH)?;
 
     let output_value = clean_ingested_subtitles(raw_input, &unwanted_characters, &mini_kana_mappings);
-    output_value;
 
     Ok(output_value)
 }
@@ -67,7 +66,7 @@ fn clean_ingested_subtitles(
 ) -> String {
     let unwanted_characters_removed = remove_unwanted_characters(input, char_blacklist);
 
-    let small_kana_converted_to_regular: String = input
+    let small_kana_converted_to_regular: String = unwanted_characters_removed
         .chars()
         .map(|x| convert_mini_kana_to_regular(&x, kana_mapping))
         .collect();
