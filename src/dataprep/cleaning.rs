@@ -13,10 +13,18 @@ struct SmallKana(char);
 #[derive(Deserialize, Eq, PartialEq, Hash, Debug)]
 struct RegularKana(char);
 
-const MINI_KANA_JSON_PATH: &'static str = "data/raw/mini_kana_mappings.json";
-const UNWANTED_CHARACTERS_PATH: &'static str = "data/raw/unwanted_characters.txt";
+const MINI_KANA_JSON_PATH: &str = "data/raw/mini_kana_mappings.json";
+const UNWANTED_CHARACTERS_PATH: &str = "data/raw/unwanted_characters.txt";
 
 pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Error>> {
+    //! Cleans an ingested subtitle string in the following order:
+    //!
+    //! - Remove parentheses and their contents
+    //! - Remove unwanted characters
+    //! - Convert mini-kana characters to their regular-sized counterparts
+    //!
+    //! After this step, the output is ready for **subtitle processing**.
+
     let unwanted_characters_raw = fs::read_to_string(UNWANTED_CHARACTERS_PATH)?;
     let unwanted_characters: HashSet<char> =
         unwanted_characters_raw.chars().collect();
@@ -24,9 +32,15 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Er
     let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
         ingest_json_file(MINI_KANA_JSON_PATH)?;
 
-    let output_value = clean_ingested_subtitles(raw_input, &unwanted_characters, &mini_kana_mappings);
+    let unwanted_characters_removed =
+        remove_unwanted_characters(raw_input, &unwanted_characters);
 
-    Ok(output_value)
+    let small_kana_converted_to_regular: String = unwanted_characters_removed
+        .chars()
+        .map(|x| convert_mini_kana_to_regular(&x, &mini_kana_mappings))
+        .collect();
+
+    Ok(small_kana_converted_to_regular)
 }
 
 pub fn helper_dedupe_and_sort(xs: &str) {
@@ -57,29 +71,6 @@ pub fn helper_dedupe_and_sort(xs: &str) {
         .collect();
 
     println!("{deduped_and_sorted}");
-}
-
-fn clean_ingested_subtitles(
-    input: &str,
-    char_blacklist: &HashSet<char>,
-    kana_mapping: &HashMap<SmallKana, RegularKana>,
-) -> String {
-    //! Cleans an ingested subtitle string in the following order:
-    //!
-    //! - Remove parentheses and their contents
-    //! - Remove unwanted characters
-    //! - Convert mini-kana characters to their regular-sized counterparts
-    //!
-    //! After this step, the output is ready for **subtitle processing**.
-
-    let unwanted_characters_removed = remove_unwanted_characters(input, char_blacklist);
-
-    let small_kana_converted_to_regular: String = unwanted_characters_removed
-        .chars()
-        .map(|x| convert_mini_kana_to_regular(&x, kana_mapping))
-        .collect();
-
-    small_kana_converted_to_regular
 }
 
 fn remove_unwanted_characters(
