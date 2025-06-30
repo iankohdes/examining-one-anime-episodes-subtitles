@@ -12,20 +12,6 @@ use std::io::BufReader;
 use serde::Deserialize;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // let mini_kana_mappings = ingest_mini_kana_mappings()?;
-    // let test_string = convert_mini_kana_to_regular(&"こうなっちまったら最後―", &mini_kana_mappings);
-    // let test_string_2 = "えっと… あの どうすれば？サイコパ99スを読み取る銃だ―australiaセーフティーが 解除される―…";
-    //
-    // let deduped_and_sorted: String = test_string_2
-    //     .chars()
-    //     .collect::<BTreeSet<_>>()
-    //     .into_iter()
-    //     .collect();
-    //
-    // println!("こうなっちまったら最後―");
-    // println!("{test_string_2}");
-    // println!("{deduped_and_sorted}");
-
     let raw_content: String = fs::read_to_string("data/raw/psycho-pass-s01e01-jp.srt")?;
     let normalised_raw_content: String = raw_content.replace("\r\n", "\n");
 
@@ -35,12 +21,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .flat_map(|x| get_subtitles_from_unit(x))
         .collect();
     let subtitles_concat = subtitles.join("");
-
-    let raw_test = "♪～（狡噛(こうがみ)）フウ～…（狡噛）うつ…！ぉ１２３４";
-    let directly_cleaned_subtitles: String = raw_test.chars().filter(|x| !"()01269―…♪！（）１２３４？ＫＴ～･".contains(*x)).collect();
-    let cleaned_subtitles = clean_subtitles(raw_test)?;
-
-    println!("Raw:\n{raw_test}\n\nDirectly cleaned:\n{directly_cleaned_subtitles}\n\nUsing clean_subtitles:\n{cleaned_subtitles}");
 
     Ok(())
 }
