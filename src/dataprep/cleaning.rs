@@ -95,6 +95,13 @@ fn remove_parentheses_and_contents(input: &str) -> String {
     //!
     //! - Regular parentheses are `(` and `)`
     //! - Full-width parentheses are `（` and `）` (used in Japanese)
+    //!
+    //! **Very important.** This function does _not_ check if there are equal
+    //! numbers of opening and closing parentheses. Should there be an unequal
+    //! number of opening and closing parenthesis symbols, the function will
+    //! still return an output, albeit one that is incorrect.
+    //!
+    //! **_Always check the input string._**
     let mut result = String::new();
     let mut depth: u32 = 0;
 
