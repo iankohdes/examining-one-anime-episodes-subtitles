@@ -67,6 +67,18 @@ pub fn helper_dedupe_and_sort(xs: &str) {
     //!
     //! The point of sorting is to (hopefully!) cluster unwanted characters
     //! away from kanji, hiragana and katakana.
+    //!
+    //! ---
+    //!
+    //! Usage example:
+    //!
+    //! ```
+    //! let test_string = "えっと… あの どうすれば？サイコパ99スを読み取る銃だ―australiaセーフティーが 解除される―…";
+    //! let deduped_and_sorted: String = helper_dedupe_and_sort(test_string);
+    //!
+    //! println!("{test_string}");
+    //! println!("{deduped_and_sorted}");  //  9ailrstu―…あうえがさすだっとどのばみるれをィイコサスセテパフー取解読銃除？
+    //! ```
 
     let deduped_and_sorted: String = xs
         .chars()
