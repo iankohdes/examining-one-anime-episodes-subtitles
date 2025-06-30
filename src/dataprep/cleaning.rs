@@ -34,11 +34,15 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Er
     let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
         ingest_json_file(MINI_KANA_JSON_PATH)?;
 
-    let unwanted_chars_removed_and_small_kana_as_regular: String = raw_input
-        .chars()
-        .filter(|x: &char| !unwanted_characters.contains(x))
-        .map(|x: char| convert_mini_kana_to_regular(&x, &mini_kana_mappings))
-        .collect();
+    let parentheses_and_their_contents_removed: String =
+        remove_parentheses_and_contents(raw_input);
+
+    let unwanted_chars_removed_and_small_kana_as_regular: String =
+        parentheses_and_their_contents_removed
+            .chars()
+            .filter(|x: &char| !unwanted_characters.contains(x))
+            .map(|x: char| convert_mini_kana_to_regular(&x, &mini_kana_mappings))
+            .collect();
 
     Ok(unwanted_chars_removed_and_small_kana_as_regular)
 }
@@ -71,6 +75,27 @@ pub fn helper_dedupe_and_sort(xs: &str) {
         .collect();
 
     println!("{deduped_and_sorted}");
+}
+
+fn remove_parentheses_and_contents(input: &str) -> String {
+    //! Removes parentheses in a string, along with all characters enclosed
+    //! within. Works on both regular and full-width parentheses:
+    //!
+    //! - Regular parentheses are `(` and `)`
+    //! - Full-width parentheses are `（` and `）` (used in Japanese)
+    let mut result = String::new();
+    let mut depth: u32 = 0;
+
+    for ch in input.chars() {
+        match ch {
+            '(' | '（' => depth += 1,
+            ')' | '）' => depth = depth.saturating_sub(1),
+            _ if depth == 0 => result.push(ch),
+            _ => {}  // Reminder: returns unit type (i.e. does nothing)
+        }
+    }
+
+    result
 }
 
 fn convert_mini_kana_to_regular(
