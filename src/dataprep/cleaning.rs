@@ -102,6 +102,7 @@ fn remove_parentheses_and_contents(input: &str) -> String {
     //! still return an output, albeit one that is incorrect.
     //!
     //! **_Always check the input string._**
+    
     let mut result = String::new();
     let mut depth: u32 = 0;
 
