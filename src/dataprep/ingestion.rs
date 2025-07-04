@@ -20,14 +20,13 @@ pub fn ingest_subtitle_file(filepath: &str) -> std::result::Result<String, Box<d
     let raw_content: String = fs::read_to_string(filepath)?;
     let normalised_raw_content: String = raw_content.replace("\r\n", "\n");
 
-    let raw_content_split: Vec<&str> = normalised_raw_content.split("\n\n").collect();
-    let subtitles: Vec<&str> = raw_content_split
+    let subtitle_units: Vec<&str> = normalised_raw_content.split("\n\n").collect();
+    let subtitles: String = subtitle_units
         .iter()
         .flat_map(|x| get_subtitles_from_unit(x))
         .collect();
-    let subtitles_concat = subtitles.join("");
 
-    Ok(subtitles_concat)
+    Ok(subtitles)
 }
 
 pub fn ingest_json_file<T>(file_path: &str) -> Result<T>
