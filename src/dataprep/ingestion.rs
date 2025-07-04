@@ -18,10 +18,9 @@ pub fn ingest_subtitle_file(filepath: &str) -> std::result::Result<String, Box<d
     //! feature.
 
     let raw_content: String = fs::read_to_string(filepath)?;
-    println!("{raw_content:?}");
     let normalised_raw_content: String = raw_content.replace("\r\n", "\n");
 
-    let raw_content_split: Vec<&str> = split_into_raw_subtitle_units(&normalised_raw_content);
+    let raw_content_split: Vec<&str> = normalised_raw_content.split("\n\n").collect();
     let subtitles: Vec<&str> = raw_content_split
         .iter()
         .flat_map(|x| get_subtitles_from_unit(x))
@@ -46,10 +45,6 @@ where
     let data: T = serde_json::from_reader(reader)?;
 
     Ok(data)
-}
-
-fn split_into_raw_subtitle_units(raw: &str) -> Vec<&str> {
-    raw.split("\n\n").collect()
 }
 
 fn get_subtitles_from_unit(subtitle_unit: &str) -> Vec<&str> {
