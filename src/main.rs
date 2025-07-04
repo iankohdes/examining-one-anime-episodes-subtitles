@@ -22,6 +22,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect();
     let subtitles_concat = subtitles.join("");
 
+    let cleaned_subtitles = clean_subtitles(&subtitles_concat)?;
+    println!("{cleaned_subtitles}");
+
     Ok(())
 }
 
