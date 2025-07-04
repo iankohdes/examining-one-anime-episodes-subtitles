@@ -20,10 +20,10 @@ pub fn ingest_subtitle_file(filepath: &str) -> std::result::Result<String, Box<d
     let raw_content: String = fs::read_to_string(filepath)?;
     let normalised_raw_content: String = raw_content.replace("\r\n", "\n");
 
-    let raw_content_split: Vec<&str> = crate::split_into_raw_subtitle_units(&normalised_raw_content);
+    let raw_content_split: Vec<&str> = split_into_raw_subtitle_units(&normalised_raw_content);
     let subtitles: Vec<&str> = raw_content_split
         .iter()
-        .flat_map(|x| crate::get_subtitles_from_unit(x))
+        .flat_map(|x| get_subtitles_from_unit(x))
         .collect();
     let subtitles_concat = subtitles.join("");
 
