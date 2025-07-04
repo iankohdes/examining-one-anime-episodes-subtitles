@@ -5,12 +5,12 @@
 mod dataprep;
 
 use dataprep::cleaning::{clean_subtitles, helper_dedupe_and_sort};
+use dataprep::ingestion::ingest_subtitle_file;
 use std::collections::{BTreeSet, HashMap};
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use serde::Deserialize;
-use crate::dataprep::ingestion::ingest_subtitle_file;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ingested_subtitles =
