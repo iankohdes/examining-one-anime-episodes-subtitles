@@ -2,10 +2,33 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
+use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use serde::de::DeserializeOwned;
 use anyhow::Result;
+use crate::dataprep::cleaning::clean_subtitles;
+
+pub fn ingest_subtitle_file(filepath: &str) -> std::result::Result<String, Box<dyn std::error::Error>> {
+    //! Ingests a single subtitle file (i.e. a text file with an `.srt` extension).
+    //!
+    //! Note that this function **assumes** that the subtitle file is in the
+    //! correct format, and **does not** check for file correctness (in either its
+    //! content or extension). Future iterations of this function may add this
+    //! feature.
+
+    let raw_content: String = fs::read_to_string(filepath)?;
+    let normalised_raw_content: String = raw_content.replace("\r\n", "\n");
+
+    let raw_content_split: Vec<&str> = crate::split_into_raw_subtitle_units(&normalised_raw_content);
+    let subtitles: Vec<&str> = raw_content_split
+        .iter()
+        .flat_map(|x| crate::get_subtitles_from_unit(x))
+        .collect();
+    let subtitles_concat = subtitles.join("");
+
+    Ok(subtitles_concat)
+}
 
 pub fn ingest_json_file<T>(file_path: &str) -> Result<T>
 where
@@ -20,6 +43,14 @@ where
     let io_file = File::open(file_path)?;
     let reader: BufReader<File> = BufReader::new(io_file);
     let data: T = serde_json::from_reader(reader)?;
-    
+
     Ok(data)
+}
+
+fn split_into_raw_subtitle_units(raw: &str) -> Vec<&str> {
+    raw.split("\n\n").collect()
+}
+
+fn get_subtitles_from_unit(subtitle_unit: &str) -> Vec<&str> {
+    subtitle_unit.split('\n').skip(2).collect()
 }
