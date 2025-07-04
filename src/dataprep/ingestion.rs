@@ -18,6 +18,7 @@ pub fn ingest_subtitle_file(filepath: &str) -> std::result::Result<String, Box<d
     //! feature.
 
     let raw_content: String = fs::read_to_string(filepath)?;
+    println!("{raw_content:?}");
     let normalised_raw_content: String = raw_content.replace("\r\n", "\n");
 
     let raw_content_split: Vec<&str> = split_into_raw_subtitle_units(&normalised_raw_content);
@@ -52,5 +53,12 @@ fn split_into_raw_subtitle_units(raw: &str) -> Vec<&str> {
 }
 
 fn get_subtitles_from_unit(subtitle_unit: &str) -> Vec<&str> {
+    //! Apply this function to one subtitle unit. (A subtitle unit comprises
+    //! an index, a pair of timestamps and one or more lines of subtitle text.)
+    //!
+    //! We skip two places because, in a subtitle unit that has been converted
+    //! into an iterator, the subtitle text starts at the third element
+    //! (i.e. after the index and timestamps).
+
     subtitle_unit.split('\n').skip(2).collect()
 }
