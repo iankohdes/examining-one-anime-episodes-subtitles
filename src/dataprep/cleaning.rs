@@ -102,15 +102,15 @@ fn remove_parentheses_and_contents(input: &str) -> String {
     //! still return an output, albeit one that is incorrect.
     //!
     //! **_Always check the input string._**
-    
+
     let mut result = String::new();
     let mut depth: u32 = 0;
 
-    for ch in input.chars() {
-        match ch {
+    for char in input.chars() {
+        match char {
             '(' | '（' => depth += 1,
             ')' | '）' => depth = depth.saturating_sub(1),
-            _ if depth == 0 => result.push(ch),
+            _ if depth == 0 => result.push(char),
             _ => {}  // Reminder: returns unit type (i.e. does nothing)
         }
     }
