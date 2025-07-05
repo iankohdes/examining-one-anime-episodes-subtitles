@@ -5,6 +5,9 @@ use std::io::BufReader;
 use serde::Deserialize;
 use crate::dataprep::ingestion::ingest_json_file;
 
+const MINI_KANA_JSON_PATH: &str = "data/raw/mini_kana_mappings.json";
+const UNWANTED_CHARACTERS_PATH: &str = "data/raw/unwanted_characters.txt";
+
 /// Newtype representing the **keys** in the file accessed by [`MINI_KANA_JSON_PATH`].
 #[derive(Deserialize, Eq, PartialEq, Hash, Debug)]
 struct SmallKana(char);
@@ -12,9 +15,6 @@ struct SmallKana(char);
 /// Newtype representing the _values_ in the file accessed by [`MINI_KANA_JSON_PATH`].
 #[derive(Deserialize, Eq, PartialEq, Hash, Debug)]
 struct RegularKana(char);
-
-const MINI_KANA_JSON_PATH: &str = "data/raw/mini_kana_mappings.json";
-const UNWANTED_CHARACTERS_PATH: &str = "data/raw/unwanted_characters.txt";
 
 pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Error>> {
     //! Cleans an ingested subtitle string in the following order:
