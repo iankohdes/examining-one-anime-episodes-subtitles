@@ -2,14 +2,16 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
+use crate::dataprep::cleaning::clean_subtitles;
+use anyhow::Result;
+use serde::de::DeserializeOwned;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
-use serde::de::DeserializeOwned;
-use anyhow::Result;
-use crate::dataprep::cleaning::clean_subtitles;
 
-pub fn ingest_subtitle_file(filepath: &str) -> std::result::Result<String, Box<dyn std::error::Error>> {
+pub fn ingest_subtitle_file(
+    filepath: &str,
+) -> std::result::Result<String, Box<dyn std::error::Error>> {
     //! Ingests a single subtitle file (i.e. a text file with an `.srt` extension).
     //!
     //! Note that this function **assumes** that the subtitle file is in the

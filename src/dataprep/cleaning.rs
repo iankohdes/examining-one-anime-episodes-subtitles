@@ -1,9 +1,9 @@
+use crate::dataprep::ingestion::ingest_json_file;
+use serde::Deserialize;
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
-use serde::Deserialize;
-use crate::dataprep::ingestion::ingest_json_file;
 
 const MINI_KANA_JSON_PATH: &str = "data/raw/mini_kana_mappings.json";
 const UNWANTED_CHARACTERS_PATH: &str = "data/raw/unwanted_characters.txt";
@@ -28,14 +28,12 @@ pub fn clean_subtitles(raw_input: &str) -> Result<String, Box<dyn std::error::Er
     //! After this step, the output is ready for **subtitle processing**.
 
     let unwanted_characters_raw = fs::read_to_string(UNWANTED_CHARACTERS_PATH)?;
-    let unwanted_characters: HashSet<char> =
-        unwanted_characters_raw.chars().collect();
+    let unwanted_characters: HashSet<char> = unwanted_characters_raw.chars().collect();
 
     let mini_kana_mappings: HashMap<SmallKana, RegularKana> =
         ingest_json_file(MINI_KANA_JSON_PATH)?;
 
-    let parentheses_and_their_contents_removed: String =
-        remove_parentheses_and_contents(raw_input);
+    let parentheses_and_their_contents_removed: String = remove_parentheses_and_contents(raw_input);
 
     let unwanted_chars_removed_and_small_kana_as_regular: String =
         parentheses_and_their_contents_removed
@@ -80,11 +78,7 @@ pub fn helper_dedupe_and_sort(xs: &str) {
     //! println!("{deduped_and_sorted}");  //  9ailrstu―…あうえがさすだっとどのばみるれをィイコサスセテパフー取解読銃除？
     //! ```
 
-    let deduped_and_sorted: String = xs
-        .chars()
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .collect();
+    let deduped_and_sorted: String = xs.chars().collect::<BTreeSet<_>>().into_iter().collect();
 
     println!("{deduped_and_sorted}");
 }
@@ -111,7 +105,7 @@ fn remove_parentheses_and_contents(input: &str) -> String {
             '(' | '（' => depth += 1,
             ')' | '）' => depth = depth.saturating_sub(1),
             _ if depth == 0 => result.push(char),
-            _ => {}  // Reminder: returns unit type (i.e. does nothing)
+            _ => {} // Reminder: returns unit type (i.e. does nothing)
         }
     }
 
@@ -134,7 +128,7 @@ fn convert_mini_kana_to_regular(
 
     let unwrapped_output: char = match kana_mapping.get(&typed_input) {
         Some(regular_kana) => regular_kana.0,
-        None => typed_input.0
+        None => typed_input.0,
     };
 
     unwrapped_output
