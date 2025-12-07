@@ -10,7 +10,7 @@ For this test project, we retrieve subtitles for the first episode of [_Psycho-P
 
 [Wikipedia](https://en.wikipedia.org/wiki/Psycho-Pass) describes _Psycho-Pass_ as a ‘cyberpunk psychological thriller’ set in a dystopian Japanese society. The series is particularly violent and, being rather serious (or depressive?) in tone, doesn’t contain much of the exaggerated speech patterns that Japanese anime series are famed for.
 
-Perhaps there might be _some_ of such speech from the protagonist in the first episode, as she’s a rookie, but – mild spoiler alert here – as the series progresses, and in the latter series, all that new-hire enthusiasm is replaced by a brooding seriousness. Quite similar to real life, then.
+There might be _some_ of such speech from the protagonist in the first episode, as she’s a rookie, but – mild spoiler alert here – as the series progresses, and in the latter series, all that new-hire enthusiasm is replaced by a brooding seriousness. Quite similar to real life, then.
 
 ## Structure of a subtitle file
 
