@@ -6,7 +6,7 @@ The episode may, on occasion, also be referred to as a **corpus**.
 
 ## Subtitles
 
-For this test project, we retrieve subtitles for the first episode of [_Psycho-Pass_ (season 1)](https://en.wikipedia.org/wiki/Psycho-Pass), available on `jimaku.cc`. [This is the download link.](https://jimaku.cc/entry/1407/download/Psycho-Pass.S01E01.WEBRip.Netflix.ja%5Bcc%5D.srt)
+For this test project, we retrieve subtitles for the first episode of [_Psycho-Pass_ (season 1)](https://en.wikipedia.org/wiki/Psycho-Pass), available on `jimaku.cc`. [Here is the download link.](https://jimaku.cc/entry/1407/download/Psycho-Pass.S01E01.WEBRip.Netflix.ja%5Bcc%5D.srt)
 
 [Wikipedia](https://en.wikipedia.org/wiki/Psycho-Pass) describes _Psycho-Pass_ as a ‘cyberpunk psychological thriller’ set in a dystopian Japanese society. The series is particularly violent and, being rather serious (or depressive?) in tone, doesn’t contain much of the exaggerated speech patterns that Japanese anime series are famed for.
 
