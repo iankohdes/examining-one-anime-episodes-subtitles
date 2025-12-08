@@ -8,7 +8,7 @@ use dataprep::cleaning::{clean_subtitles, helper_dedupe_and_sort};
 use dataprep::ingestion::ingest_subtitle_file;
 use serde::Deserialize;
 use std::collections::{BTreeSet, HashMap};
-use std::fs;
+use std::{env, fs};
 use std::fs::File;
 use std::io::BufReader;
 
