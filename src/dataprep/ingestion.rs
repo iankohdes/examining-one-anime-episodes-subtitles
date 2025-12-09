@@ -59,7 +59,7 @@ impl TryFrom<&str> for SafeFilePath {
             return Err(PathError::EmptyPath);
         } else if value.chars().all(|char| PATH_CHAR_WHITELIST.contains(char)) == false {
             return Err(PathError::IllegalCharacters);
-        } else if extension_is_srt(&path) == false {
+        } else if path.extension() != Some("srt".as_ref()) {
             return Err(PathError::IncorrectExtension);
         };
 
@@ -135,21 +135,4 @@ fn get_subtitles_from_unit(subtitle_unit: &str) -> Vec<&str> {
     //! (i.e. after the index and timestamps).
 
     subtitle_unit.split('\n').skip(2).collect()
-}
-
-fn extension_is_srt(path: &PathBuf) -> bool {
-    // Not sure if `srt` should be stored just like this; at any rate this is
-    // the only location where I need it.
-
-    //! Checks that the file extension ends with `.srt`. Returns `true` if that
-    //! is the case and `false` otherwise. Takes a `&PathBuf` as an argument,
-    //! rather than a `&str`.
-
-    let reference: &OsStr = OsStr::new("srt");
-    let file_extension: Option<&OsStr> = path.extension();
-
-    match file_extension {
-        Some(ext) => ext == reference,
-        None => false,
-    }
 }
