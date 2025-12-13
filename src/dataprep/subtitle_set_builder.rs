@@ -67,11 +67,3 @@ impl TryFrom<&str> for RawSubtitleUnit {
         Ok(RawSubtitleUnit { raw_index, raw_timing, raw_lines })
     }
 }
-
-fn remove_empty_first_element(input: Vec<&str>) -> Vec<&str> {
-    if input[0] == "" {
-        input[1..].to_vec()
-    } else {
-        input
-    }
-}
