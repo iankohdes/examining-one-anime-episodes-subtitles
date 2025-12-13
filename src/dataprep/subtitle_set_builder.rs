@@ -23,8 +23,9 @@ pub struct Timing {
     pub end: Timestamp,
 }
 
-/// Rich timestamp representation.
-/// Represents `hh:mm:ss,mmm`.
+///Rich timestamp representation.
+///Represents `hh:mm:ss,mmm`.
+// Implement the TryFrom trait
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Timestamp {
     pub hours: u8,
@@ -39,6 +40,7 @@ pub struct SubtitleSet {
     pub units: Vec<SubtitleUnit>,
 }
 
+<<<<<<< HEAD
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct RawSubtitleUnit {
     raw_index: String,
