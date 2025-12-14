@@ -5,6 +5,8 @@
 use std::str::FromStr;
 
 const PERMITTED_TIMESTAMP_CHARS: &str = "01234567890:,";
+const U8_MAX_255: usize = u8::MAX as usize;
+const U16_MAX_65535: usize = u16::MAX as usize;
 
 /// One subtitle block in an SRT file.
 ///
@@ -108,26 +110,24 @@ impl FromStr for Timestamp {
             return Err(TimestampError::MalformedTimestamp)
         }
 
-        let u8_max = u8::MAX as usize;
-
         let hours = raw_hh.parse::<usize>().unwrap();
-        if hours > u8_max {
+        if hours > U8_MAX_255 {
             return Err(TimestampError::HoursValueExceeds8BitAllocation)
         }
         let minutes = raw_mm.parse::<usize>().unwrap();
-        if minutes > u8_max {
+        if minutes > U8_MAX_255 {
             return Err(TimestampError::MinutesValueExceeds8BitAllocation)
         } else if minutes > 59 {
             return Err(TimestampError::MinutesValueExceeds59)
         }
         let seconds = raw_ss.parse::<usize>().unwrap();
-        if seconds > u8_max {
+        if seconds > U8_MAX_255 {
             return Err(TimestampError::SecondsValueExceeds8BitAllocation)
         } else if seconds > 59 {
             return Err(TimestampError::SecondsValueExceeds59)
         }
         let milliseconds = raw_ms.parse::<usize>().unwrap();
-        if milliseconds > u16::MAX as usize {
+        if milliseconds > U16_MAX_65535 {
             return Err(TimestampError::MillisecondsValueExceeds16BitAllocation)
         } else if milliseconds > 999 {
             return Err(TimestampError::MillisecondsValueExceeds999)
