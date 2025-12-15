@@ -20,7 +20,7 @@ const U32_MAX_4294967295: usize = u32::MAX as usize;
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SubtitleUnit {
-    pub index: u32,
+    pub index: Index,
     pub timing: Timing,
     pub lines: Vec<String>,
 }
