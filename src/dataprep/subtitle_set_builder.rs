@@ -4,9 +4,11 @@
 
 use std::str::FromStr;
 
-const PERMITTED_TIMESTAMP_CHARS: &str = "01234567890:,";
+const PERMITTED_INDEX_CHARS: &str = "0123456789";
+const PERMITTED_TIMESTAMP_CHARS: &str = "0123456789:,";
 const U8_MAX_255: usize = u8::MAX as usize;
 const U16_MAX_65535: usize = u16::MAX as usize;
+const U32_MAX_4294967295: usize = u32::MAX as usize;
 
 /// One subtitle block in an SRT file.
 ///
@@ -52,6 +54,7 @@ pub enum TimestampError {
     EmptySecondsValue,
     EmptyMinutesValue,
     EmptyHoursValue,
+
     MillisecondsValueExceeds999,
     SecondsValueExceeds59,
     MinutesValueExceeds59,
@@ -59,6 +62,7 @@ pub enum TimestampError {
     SecondsValueExceeds8BitAllocation,
     MinutesValueExceeds8BitAllocation,
     HoursValueExceeds8BitAllocation,
+
     EmptyString,
     DisallowedCharacters,
     NewlineCharDetected,
@@ -141,5 +145,34 @@ impl FromStr for Timestamp {
                 milliseconds: milliseconds as u16
             }
         )
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Index(u32);
+
+#[derive(Debug)]
+pub enum IndexError {
+    EmptyIndex,
+    IndexExceedsMaxU32Size,
+    IndexContainsDisallowedChars
+}
+
+impl FromStr for Index {
+    type Err = IndexError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.is_empty() {
+            return Err(IndexError::EmptyIndex)
+        } else if s.chars().all(|char| PERMITTED_INDEX_CHARS.contains(char)) == false {
+            return Err(IndexError::IndexContainsDisallowedChars)
+        }
+
+        let parsed_index = s.parse::<usize>().unwrap();
+        if parsed_index > U32_MAX_4294967295 {
+            return Err(IndexError::IndexExceedsMaxU32Size)
+        }
+
+        Ok(Index(parsed_index as u32))
     }
 }
