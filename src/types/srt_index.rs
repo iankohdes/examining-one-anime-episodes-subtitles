@@ -5,7 +5,10 @@ const U32_MAX_4294967295: usize = u32::MAX as usize;
 
 /// Within an `.srt` file, when reading from top to bottom, instances of
 /// `SrtIndex` must be monotonic increasing and the value of each increase
-/// in step should be `1`, otherwise the subtitle file is not well formed.
+/// in step should be `1`, otherwise the subtitle file is not well-formed.
+///
+/// From the definition of [`PERMITTED_INDEX_CHARS`], it is implicitly
+/// expected that a subtitle file’s indices are non-negative.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SrtIndex(u32);
 
