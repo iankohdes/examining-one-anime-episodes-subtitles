@@ -2,7 +2,6 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
-use crate::dataprep::cleaning::clean_subtitles;
 use anyhow::Result;
 use serde::de::DeserializeOwned;
 use serde_json::from_reader;
@@ -65,7 +64,7 @@ impl TryFrom<&str> for SafeFilePath {
 
         let result: Result<SafeFilePath, PathError> = match fs::canonicalize(&path) {
             Ok(absolute_path) => Ok(SafeFilePath {
-                get_path: (absolute_path),
+                get_path: absolute_path,
             }),
             Err(_) => Err(PathError::FileNotFound),
         };
@@ -83,7 +82,7 @@ impl AsRef<Path> for SafeFilePath {
 
 pub fn ingest_subtitle_file(
     filepath: &str,
-) -> std::result::Result<String, Box<dyn std::error::Error>> {
+) -> std::result::Result<String, Box<dyn Error>> {
     //! Ingests a single subtitle file (i.e. a text file with an `.srt` extension).
     //!
     //! This function checks for file correctness and formats its path into an
