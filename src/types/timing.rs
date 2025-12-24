@@ -23,6 +23,9 @@ pub enum TimingError {
 }
 
 impl From<TimestampError> for TimingError {
+    // This allows me to convert a `TimestampError` to a `TimingError` using the `parse` function. Although
+    // there is no explicit use of the `from` function, the `?` operator implicitly applies `from` when
+    // dealing with the error branch (parsing returns a `Result` type).
     fn from(error: TimestampError) -> Self {
         TimingError::Timestamp(error)
     }
