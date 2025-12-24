@@ -42,10 +42,10 @@ impl FromStr for Timing {
         let split_s_elems = split_s.clone().count();
 
         if split_s_elems == 1 {
-            println!("Regarding timing: {}", s);
+            println!("Regarding timing string: {}", s);
             return Err(TimingError::MalformedTiming(String::from("Missing timestamp separator (-->)")))
         } else if split_s_elems > 2 {
-            println!("Regarding timing: {}", s);
+            println!("Regarding timing string: {}", s);
             return Err(TimingError::MalformedTiming(String::from("Multiple timestamp separators")))
         }
 
