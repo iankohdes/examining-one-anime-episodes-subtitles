@@ -18,8 +18,7 @@ pub struct Timing {
 #[derive(Debug)]
 pub enum TimingError {
     EmptyTiming,
-    NoTimestampSeparator,
-    MultipleTimestampSeparators,
+    MalformedTiming(String),
     Timestamp(TimestampError),
 }
 
@@ -32,6 +31,8 @@ impl From<TimestampError> for TimingError {
 impl FromStr for Timing {
     type Err = TimingError;
 
+    // TODO: there needs to be a comparison logic between the first and second timestamps. If the first timestamp has
+    // a larger value than the second one, then we must return an error.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
             return Err(TimingError::EmptyTiming)
@@ -41,9 +42,11 @@ impl FromStr for Timing {
         let split_s_elems = split_s.clone().count();
 
         if split_s_elems == 1 {
-            return Err(TimingError::NoTimestampSeparator)
+            println!("Regarding timing: {}", s);
+            return Err(TimingError::MalformedTiming(String::from("Missing timestamp separator (-->)")))
         } else if split_s_elems > 2 {
-            return Err(TimingError::MultipleTimestampSeparators)
+            println!("Regarding timing: {}", s);
+            return Err(TimingError::MalformedTiming(String::from("Multiple timestamp separators")))
         }
 
         let split_s_clone: Vec<&str> = split_s.clone().collect();

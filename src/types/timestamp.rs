@@ -16,23 +16,8 @@ pub struct Timestamp {
 
 #[derive(Debug)]
 pub enum TimestampError {
-    EmptyMillisecondsValue,
-    EmptySecondsValue,
-    EmptyMinutesValue,
-    EmptyHoursValue,
-
-    MillisecondsValueExceeds999,
-    SecondsValueExceeds59,
-    MinutesValueExceeds59,
-    MillisecondsValueExceeds16BitAllocation,
-    SecondsValueExceeds8BitAllocation,
-    MinutesValueExceeds8BitAllocation,
-    HoursValueExceeds8BitAllocation,
-
     EmptyString,
-    DisallowedCharacters,
-    NewlineCharDetected,
-    MalformedTimestamp,
+    MalformedTimestamp(String),
 }
 
 impl FromStr for Timestamp {
@@ -47,60 +32,78 @@ impl FromStr for Timestamp {
         if s.is_empty() {
             return Err(TimestampError::EmptyString)
         } else if count_char_occurrences(s, ',') != 1 {
-            return Err(TimestampError::MalformedTimestamp)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Timestamp string must have one, and only one, comma as a millisecond separator")))
         } else if s.contains("\n") {
-            return Err(TimestampError::NewlineCharDetected)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Illegal newline character detected")))
         } else if s.chars().all(|char| PERMITTED_TIMESTAMP_CHARS.contains(char)) == false {
-            return Err(TimestampError::DisallowedCharacters)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Illegal characters detected; allowed characters are 0123456789:,")))
         }
 
+        // First element of vector: HH:MM:SS
+        // Second element of vector: MS
         let split_on_comma: Vec<&str> = s.split(",").collect();
 
         let raw_hh_mm_ss = split_on_comma[0];
         let split_hh_mm_ss: Vec<&str> = raw_hh_mm_ss.split(":").collect();
         if split_hh_mm_ss.len() != 3 {
-            return Err(TimestampError::MalformedTimestamp)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Timestamp must have properly defined HH:MM:SS component")))
         }
 
         let raw_hh = split_hh_mm_ss[0];
         let raw_mm = split_hh_mm_ss[1];
         let raw_ss = split_hh_mm_ss[2];
         if raw_hh.is_empty() {
-            return Err(TimestampError::EmptyHoursValue)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Empty hours value in HH:MM:SS")))
         } else if raw_mm.is_empty() {
-            return Err(TimestampError::EmptyMinutesValue)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Empty minutes value in HH:MM:SS")))
         } else if raw_ss.is_empty() {
-            return Err(TimestampError::EmptySecondsValue)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Empty seconds value in HH:MM:SS")))
         }
 
         let raw_ms = split_on_comma[1];
         if raw_ms.is_empty() {
-            return Err(TimestampError::EmptyMillisecondsValue)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Empty milliseconds value")))
         } else if count_char_occurrences(raw_ms, ':') > 0 {
-            return Err(TimestampError::MalformedTimestamp)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Milliseconds component contains illegal colon character")))
         }
 
         let hours = raw_hh.parse::<usize>().unwrap();
-        if hours > U8_MAX_255 {
-            return Err(TimestampError::HoursValueExceeds8BitAllocation)
+        if hours > U8_MAX_255 { // Should I increase the allocation to u16? 255 hours may be exceeded in very rare cases
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Hours value exceeds maximum unsigned 8-bit value of 255")))
         }
         let minutes = raw_mm.parse::<usize>().unwrap();
         if minutes > U8_MAX_255 {
-            return Err(TimestampError::MinutesValueExceeds8BitAllocation)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Minutes value exceeds maximum unsigned 8-bit value of 255")))
         } else if minutes > 59 {
-            return Err(TimestampError::MinutesValueExceeds59)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Minutes value exceeds 59")))
         }
         let seconds = raw_ss.parse::<usize>().unwrap();
         if seconds > U8_MAX_255 {
-            return Err(TimestampError::SecondsValueExceeds8BitAllocation)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Seconds value exceeds maximum unsigned 8-bit value of 255")))
         } else if seconds > 59 {
-            return Err(TimestampError::SecondsValueExceeds59)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Seconds value exceeds 59")))
         }
         let milliseconds = raw_ms.parse::<usize>().unwrap();
         if milliseconds > U16_MAX_65535 {
-            return Err(TimestampError::MillisecondsValueExceeds16BitAllocation)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Milliseconds value exceeds maximum unsigned 16-bit value of 65535")))
         } else if milliseconds > 999 {
-            return Err(TimestampError::MillisecondsValueExceeds999)
+            println!("Regarding timestamp string: {}", s);
+            return Err(TimestampError::MalformedTimestamp(String::from("Milliseconds value exceeds 999")))
         }
 
         Ok(
