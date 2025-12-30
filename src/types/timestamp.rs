@@ -21,7 +21,7 @@ pub enum TimestampError {
 }
 
 impl TimestampError {
-    fn malformed(msg: &str, original_input: &str) -> Self {
+    pub fn malformed(msg: &str, original_input: &str) -> Self {
         TimestampError::MalformedTimestamp(
             format!("{} (input string: {})", msg, original_input)
         )
