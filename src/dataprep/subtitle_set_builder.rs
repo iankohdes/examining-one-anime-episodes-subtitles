@@ -2,6 +2,11 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
+use crate::types::srt_index::{SrtIndex, SrtIndexError};
+use crate::types::timestamp::{Timestamp, TimestampError};
+use crate::types::timing::{Timing, TimingError};
+use std::str::FromStr;
+
 /// One subtitle block in an SRT file.
 ///
 /// ```text
@@ -12,26 +17,9 @@
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SubtitleUnit {
-    pub index: u32,
+    pub index: SrtIndex,
     pub timing: Timing,
     pub lines: Vec<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Timing {
-    pub start: Timestamp,
-    pub end: Timestamp,
-}
-
-///Rich timestamp representation.
-///Represents `hh:mm:ss,mmm`.
-// Implement the TryFrom trait
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Timestamp {
-    pub hours: u8,
-    pub minutes: u8,
-    pub seconds: u8,
-    pub milliseconds: u16,
 }
 
 /// A full subtitle file, in its logical grouped form.
