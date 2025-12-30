@@ -22,6 +22,14 @@ pub enum TimingError {
     Timestamp(TimestampError),
 }
 
+impl TimingError {
+    pub fn malformed(msg: &str, original_input: &str) -> Self {
+        TimingError::MalformedTiming(
+            format!("{} (input: {})", msg, original_input)
+        )
+    }
+}
+
 impl From<TimestampError> for TimingError {
     // This allows me to convert a `TimestampError` to a `TimingError` using the `parse` function. Although
     // there is no explicit use of the `from` function, the `?` operator implicitly applies `from` when
@@ -33,9 +41,7 @@ impl From<TimestampError> for TimingError {
 
 impl FromStr for Timing {
     type Err = TimingError;
-
-    // TODO: there needs to be a comparison logic between the first and second timestamps. If the first timestamp has
-    // a larger value than the second one, then we must return an error.
+    
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
             return Err(TimingError::EmptyTiming)
@@ -46,10 +52,10 @@ impl FromStr for Timing {
 
         if split_s_elems == 1 {
             println!("Regarding timing string: {}", s);
-            return Err(TimingError::MalformedTiming(String::from("Missing timestamp separator (-->)")))
+            return Err(TimingError::malformed("Missing timestamp separator (-->)", s))
         } else if split_s_elems > 2 {
             println!("Regarding timing string: {}", s);
-            return Err(TimingError::MalformedTiming(String::from("Multiple timestamp separators")))
+            return Err(TimingError::malformed("Multiple timestamp separators", s))
         }
 
         let split_s_clone: Vec<&str> = split_s.clone().collect();
@@ -59,6 +65,10 @@ impl FromStr for Timing {
 
         let end_raw: &str = split_s_clone[1].trim();
         let end_timestamp = end_raw.parse::<Timestamp>()?;
+
+        if start_timestamp > end_timestamp {
+            return Err(TimingError::malformed("Start timestamp is later than end timestamp", s))
+        }
 
         Ok(Timing{start: start_timestamp, end: end_timestamp})
     }
