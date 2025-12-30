@@ -3,6 +3,7 @@
 #![allow(unused_variables)]
 
 mod dataprep;
+mod types;
 
 use dataprep::cleaning::{clean_subtitles, helper_dedupe_and_sort};
 use dataprep::ingestion::ingest_subtitle_file;
