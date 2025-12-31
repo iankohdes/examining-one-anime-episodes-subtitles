@@ -1,6 +1,6 @@
-use std::str::FromStr;
 use crate::types::timestamp;
 use crate::types::timestamp::{Timestamp, TimestampError};
+use std::str::FromStr;
 
 const TIMING_SEPARATOR: &str = "-->";
 
@@ -24,9 +24,7 @@ pub enum TimingError {
 
 impl TimingError {
     pub fn malformed(msg: &str, original_input: &str) -> Self {
-        TimingError::MalformedTiming(
-            format!("{} (input: {})", msg, original_input)
-        )
+        TimingError::MalformedTiming(format!("{} (input: {})", msg, original_input))
     }
 }
 
@@ -41,19 +39,22 @@ impl From<TimestampError> for TimingError {
 
 impl FromStr for Timing {
     type Err = TimingError;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
-            return Err(TimingError::EmptyTiming)
+            return Err(TimingError::EmptyTiming);
         }
 
-        let split_s = s.split(TIMING_SEPARATOR);  // `split_s` is an iterator
+        let split_s = s.split(TIMING_SEPARATOR); // `split_s` is an iterator
         let split_s_elems = split_s.clone().count();
 
         if split_s_elems == 1 {
-            return Err(TimingError::malformed("Missing timestamp separator (-->)", s))
+            return Err(TimingError::malformed(
+                "Missing timestamp separator (-->)",
+                s,
+            ));
         } else if split_s_elems > 2 {
-            return Err(TimingError::malformed("Multiple timestamp separators", s))
+            return Err(TimingError::malformed("Multiple timestamp separators", s));
         }
 
         let split_s_clone: Vec<&str> = split_s.clone().collect();
@@ -65,10 +66,16 @@ impl FromStr for Timing {
         let end_timestamp = end_raw.parse::<Timestamp>()?;
 
         if start_timestamp > end_timestamp {
-            return Err(TimingError::malformed("Start timestamp is later than end timestamp", s))
+            return Err(TimingError::malformed(
+                "Start timestamp is later than end timestamp",
+                s,
+            ));
         }
 
-        Ok(Timing{start: start_timestamp, end: end_timestamp})
+        Ok(Timing {
+            start: start_timestamp,
+            end: end_timestamp,
+        })
     }
 }
 
@@ -79,7 +86,7 @@ mod tests {
     #[test]
     fn test_parse_valid_string() {
         let input = "00:18:25,437 --> 00:18:27,439";
-        let result = input.parse::<Timing>();  // Reminder: we can use `parse` because we implemented `FromStr`
+        let result = input.parse::<Timing>(); // Reminder: we can use `parse` because we implemented `FromStr`
 
         assert!(result.is_ok())
     }
@@ -97,7 +104,8 @@ mod tests {
     fn test_missing_arrow_separator() {
         let input = "00:18:25,437 00:18:27,439";
         let result = input.parse::<Timing>();
-        let expected_error_msg = "Missing timestamp separator (-->) (input: 00:18:25,437 00:18:27,439)";
+        let expected_error_msg =
+            "Missing timestamp separator (-->) (input: 00:18:25,437 00:18:27,439)";
 
         assert!(result.is_err());
         match result.unwrap_err() {
