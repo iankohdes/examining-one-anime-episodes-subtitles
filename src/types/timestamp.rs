@@ -14,14 +14,14 @@ pub struct Timestamp {
     pub milliseconds: u16,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum TimestampError {
     EmptyString,
     MalformedTimestamp(String),
 }
 
 impl TimestampError {
-    fn malformed(msg: &str, original_input: &str) -> Self {
+    pub fn malformed(msg: &str, original_input: &str) -> Self {
         TimestampError::MalformedTimestamp(
             format!("{} (input string: {})", msg, original_input)
         )
