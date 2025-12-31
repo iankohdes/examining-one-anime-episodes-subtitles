@@ -15,7 +15,7 @@ pub struct Timing {
     pub end: Timestamp,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum TimingError {
     EmptyTiming,
     MalformedTiming(String),
@@ -47,14 +47,12 @@ impl FromStr for Timing {
             return Err(TimingError::EmptyTiming)
         }
 
-        let split_s = s.split(TIMING_SEPARATOR);  // This is an iterator
+        let split_s = s.split(TIMING_SEPARATOR);  // `split_s` is an iterator
         let split_s_elems = split_s.clone().count();
 
         if split_s_elems == 1 {
-            println!("Regarding timing string: {}", s);
             return Err(TimingError::malformed("Missing timestamp separator (-->)", s))
         } else if split_s_elems > 2 {
-            println!("Regarding timing string: {}", s);
             return Err(TimingError::malformed("Multiple timestamp separators", s))
         }
 
@@ -81,8 +79,30 @@ mod tests {
     #[test]
     fn test_parse_valid_string() {
         let input = "00:18:25,437 --> 00:18:27,439";
-        let parsed_input = input.parse::<Timing>();
+        let result = input.parse::<Timing>();  // Reminder: we can use `parse` because we implemented `FromStr`
 
-        assert!(parsed_input.is_ok())
+        assert!(result.is_ok())
+    }
+
+    #[test]
+    fn test_parse_empty_string() {
+        let input = "";
+        let result = input.parse::<Timing>();
+
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), TimingError::EmptyTiming);
+    }
+
+    #[test]
+    fn test_missing_arrow_separator() {
+        let input = "00:18:25,437 00:18:27,439";
+        let result = input.parse::<Timing>();
+        let expected_error_msg = "Missing timestamp separator (-->) (input: 00:18:25,437 00:18:27,439)";
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            TimingError::MalformedTiming(msg) => assert_eq!(msg, expected_error_msg),
+            _ => panic!("Expected this error message: Missing timestamp separator (-->)"),
+        }
     }
 }
