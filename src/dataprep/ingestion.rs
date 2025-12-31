@@ -11,13 +11,14 @@ use std::ffi::OsStr;
 use std::fmt::{Display, Formatter};
 use std::fs;
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
-const PATH_CHAR_WHITELIST: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./";
+const PATH_CHAR_WHITELIST: &str =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./";
 
 #[derive(Debug)]
-enum PathError {
+pub enum PathError {
     EmptyPath,
     FileNotFound,
     IllegalCharacters,
@@ -32,7 +33,10 @@ impl Display for PathError {
         match self {
             PathError::EmptyPath => write!(f, "File path is empty"),
             PathError::FileNotFound => write!(f, "File not found"),
-            PathError::IllegalCharacters => write!(f, "Characters must be:\n ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./"),
+            PathError::IllegalCharacters => write!(
+                f,
+                "Characters must be:\n ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./"
+            ),
             PathError::IncorrectExtension => write!(f, "File extension is not .srt"),
         }
     }
@@ -41,7 +45,7 @@ impl Display for PathError {
 impl Error for PathError {}
 
 #[derive(Debug)]
-struct SafeFilePath {
+pub struct SafeFilePath {
     get_path: PathBuf,
 }
 
@@ -80,34 +84,6 @@ impl AsRef<Path> for SafeFilePath {
     }
 }
 
-pub fn ingest_subtitle_file(
-    filepath: &str,
-) -> std::result::Result<String, Box<dyn Error>> {
-    //! Ingests a single subtitle file (i.e. a text file with an `.srt` extension).
-    //!
-    //! This function checks for file correctness and formats its path into an
-    //! _absolute_ path. Acceptable characters in a file name are:
-    //!
-    //! ```text
-    //! ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./
-    //! ```
-    //!
-    //! The file _must_ use the `.srt` extension.
-
-    let checked_path_result = SafeFilePath::try_from(filepath)?;
-    let content = fs::read_to_string(checked_path_result)?;
-
-    let normalised_raw_content: String = content.replace("\r\n", "\n");
-
-    let subtitle_units: Vec<&str> = normalised_raw_content.split("\n\n").collect();
-    let subtitles: String = subtitle_units
-        .iter()
-        .flat_map(|x| get_subtitles_from_unit(x))
-        .collect();
-
-    Ok(subtitles)
-}
-
 pub fn ingest_json_file<T>(file_path: &str) -> Result<T>
 where
     T: DeserializeOwned,
@@ -123,15 +99,4 @@ where
     let data: T = from_reader(reader)?;
 
     Ok(data)
-}
-
-fn get_subtitles_from_unit(subtitle_unit: &str) -> Vec<&str> {
-    //! Apply this function to one subtitle unit. (A subtitle unit comprises
-    //! an index, a pair of timestamps and one or more lines of subtitle text.)
-    //!
-    //! We skip two places because, in a subtitle unit that has been converted
-    //! into an iterator, the subtitle text starts at the third element
-    //! (i.e. after the index and timestamps).
-
-    subtitle_unit.split('\n').skip(2).collect()
 }
