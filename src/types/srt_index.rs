@@ -16,7 +16,7 @@ pub struct SrtIndex(u32);
 pub enum SrtIndexError {
     EmptyIndex,
     IndexExceedsMaxU32Size,
-    IndexContainsDisallowedChars
+    IndexContainsDisallowedChars,
 }
 
 impl FromStr for SrtIndex {
@@ -24,14 +24,14 @@ impl FromStr for SrtIndex {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
-            return Err(SrtIndexError::EmptyIndex)
+            return Err(SrtIndexError::EmptyIndex);
         } else if s.chars().all(|char| PERMITTED_INDEX_CHARS.contains(char)) == false {
-            return Err(SrtIndexError::IndexContainsDisallowedChars)
+            return Err(SrtIndexError::IndexContainsDisallowedChars);
         }
 
         let parsed_index = s.parse::<usize>().unwrap();
         if parsed_index > U32_MAX_4294967295 {
-            return Err(SrtIndexError::IndexExceedsMaxU32Size)
+            return Err(SrtIndexError::IndexExceedsMaxU32Size);
         }
 
         Ok(SrtIndex(parsed_index as u32))
