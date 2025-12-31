@@ -73,3 +73,16 @@ impl FromStr for Timing {
         Ok(Timing{start: start_timestamp, end: end_timestamp})
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_valid_string() {
+        let input = "00:18:25,437 --> 00:18:27,439";
+        let parsed_input = input.parse::<Timing>();
+
+        assert!(parsed_input.is_ok())
+    }
+}
