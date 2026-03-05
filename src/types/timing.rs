@@ -45,8 +45,9 @@ impl FromStr for Timing {
             return Err(TimingError::EmptyTiming);
         }
 
-        let split_s = s.split(TIMING_SEPARATOR); // `split_s` is an iterator
-        let split_s_elems = split_s.clone().count();
+        let split_s = s.split(TIMING_SEPARATOR);  // `split_s` is an iterator
+        let split_s_collected: Vec<&str> = split_s.collect();
+        let split_s_elems = split_s_collected.len();
 
         if split_s_elems == 1 {
             return Err(TimingError::malformed(
@@ -57,12 +58,10 @@ impl FromStr for Timing {
             return Err(TimingError::malformed("Multiple timestamp separators", s));
         }
 
-        let split_s_clone: Vec<&str> = split_s.clone().collect();
-
-        let start_raw: &str = split_s_clone[0].trim();
+        let start_raw: &str = split_s_collected[0].trim();
         let start_timestamp = start_raw.parse::<Timestamp>()?;
 
-        let end_raw: &str = split_s_clone[1].trim();
+        let end_raw: &str = split_s_collected[1].trim();
         let end_timestamp = end_raw.parse::<Timestamp>()?;
 
         if start_timestamp > end_timestamp {
