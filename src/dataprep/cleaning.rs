@@ -1,3 +1,6 @@
+//! 2026-03-10 This is no longer required as part of the project’s scope, since
+//! it is now more generic and doesn’t solely focus on Japanese.
+
 use crate::dataprep::ingestion::ingest_json_file;
 use serde::Deserialize;
 use std::collections::{BTreeSet, HashMap, HashSet};
