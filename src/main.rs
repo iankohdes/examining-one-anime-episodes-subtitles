@@ -10,12 +10,12 @@ use dataprep::parser::SubtitleParser;
 use serde::Deserialize;
 use std::collections::{BTreeSet, HashMap};
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufRead, BufReader};
 use std::str::FromStr;
 use std::{env, fs};
 
 use crate::dataprep::ingestion::SafeFilePath;
-use crate::dataprep::subtitle_set_builder::SubtitleUnit;
+use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::srt_index::SrtIndex;
 use crate::types::timing::Timing;
 
@@ -46,7 +46,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(checked_path_result)?;
     let reader = BufReader::new(file);
 
-    let mut parser = SubtitleParser::new();
+    let x = reader.lines();
+
+    // let mut parser = SubtitleParser::new();
 
     // The parser takes a BufRead and returns an iterator over Result<SubtitleUnit, Error>.
     // This is the lazy approach - parse units one at a time rather than loading everything
