@@ -27,7 +27,10 @@ impl SrtParser {
         let mut current_line = raw_iter.next();
 
         loop {
-            if current_line.unwrap().unwrap() == "" && current_state == ParseState::Empty {
+            if current_line.is_none() {
+                break;
+            }
+            else if current_line.unwrap().unwrap() == "" && current_state == ParseState::Empty {
                 current_line = raw_iter.next();
             } else if current_line.is_some() && current_state == ParseState::Empty {
                 let srt_index = current_line.unwrap().unwrap().parse::<SrtIndex>().unwrap();
