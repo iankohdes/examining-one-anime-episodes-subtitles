@@ -32,7 +32,11 @@ impl SrtParser {
         loop {
             match &current_state {
                 ParseState::Empty => {
-                    if current_line.is_none() { return Ok(output)} else {
+                    if current_line.is_none() {
+                        return Ok(output)
+                    } else if current_line.unwrap().unwrap().is_empty() {
+                        current_line = raw_iter.next();
+                    } else {
                         let srt_index = current_line.unwrap().unwrap().parse::<SrtIndex>().unwrap();
                         current_line = raw_iter.next();
                         current_state = ParseState::IndexOnly(IndexOnly::new(srt_index));
