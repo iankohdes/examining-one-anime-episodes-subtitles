@@ -1,17 +1,31 @@
+use crate::dataprep::parser::SubtitleParser;
 use crate::types::srt_index::SrtIndex;
+use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::timing::Timing;
 
 /// See [`SrtIndex`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IndexOnly {
-    index: SrtIndex,
+    pub index: SrtIndex,
+}
+
+impl IndexOnly {
+    pub fn new(index: SrtIndex) -> Self {
+        IndexOnly { index }
+    }
 }
 
 /// See [`Timing`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IndexAndTiming {
-    index: SrtIndex,
-    timing: Timing,
+    pub index: SrtIndex,
+    pub timing: Timing,
+}
+
+impl IndexAndTiming {
+    pub fn new(index: SrtIndex, timing: Timing) -> Self {
+        IndexAndTiming { index, timing }
+    }
 }
 
 /// This type describes the incremental build of a [`SubtitleUnit`], starting
@@ -19,7 +33,7 @@ pub struct IndexAndTiming {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParseState {
     Empty,
-    IndexOnly,
-    IndexAndTiming,
-    SubtitleUnit,
+    IndexOnly(IndexOnly),
+    IndexAndTiming(IndexAndTiming),
+    SubtitleUnit(SubtitleUnit),
 }
