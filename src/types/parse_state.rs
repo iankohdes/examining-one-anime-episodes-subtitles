@@ -3,21 +3,22 @@ use crate::types::timing::Timing;
 
 /// See [`SrtIndex`].
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct IndexOnly {
+pub struct IndexOnly {
     index: SrtIndex,
 }
 
 /// See [`Timing`].
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct IndexAndTiming {
+pub struct IndexAndTiming {
     index: SrtIndex,
     timing: Timing,
 }
 
 /// This type describes the incremental build of a [`SubtitleUnit`], starting
-/// with [`IndexOnly`], [`IndexAndTiming`] and finally a `SubtitleUnit`.
+/// with `Empty`, [`IndexOnly`], [`IndexAndTiming`] and finally a `SubtitleUnit`.
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum ParseState {
+pub enum ParseState {
+    Empty,
     IndexOnly,
     IndexAndTiming,
     SubtitleUnit,
