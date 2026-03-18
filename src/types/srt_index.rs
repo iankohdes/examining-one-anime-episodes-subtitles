@@ -9,7 +9,7 @@ const U32_MAX_4294967295: usize = u32::MAX as usize;
 ///
 /// From the definition of [`PERMITTED_INDEX_CHARS`], it is implicitly
 /// expected that a subtitle file’s indices are non-negative.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SrtIndex(u32);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
