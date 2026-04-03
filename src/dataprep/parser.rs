@@ -1,4 +1,4 @@
-use crate::dataprep::subtitle_set_builder::SubtitleUnit;
+use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::srt_index::SrtIndexError;
 use crate::types::timing::TimingError;
 use std::error::Error;

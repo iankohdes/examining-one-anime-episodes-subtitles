@@ -12,7 +12,7 @@ const U32_MAX_4294967295: usize = u32::MAX as usize;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SrtIndex(u32);
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SrtIndexError {
     EmptyIndex,
     IndexExceedsMaxU32Size,
