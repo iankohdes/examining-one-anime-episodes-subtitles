@@ -42,12 +42,14 @@ impl SrtParser {
                         current_state = ParseState::IndexOnly(IndexOnly::new(srt_index));
                     }
                 }
-                ParseState::IndexOnly(current_state) => {
-                    let srt_index = current_state.index;
+                ParseState::IndexOnly(current_state_idx) => {
+                    let srt_index = current_state_idx.index;
                     let timing = current_line.unwrap().unwrap().parse::<Timing>().unwrap();
                     current_line = raw_iter.next();
                     current_state = ParseState::IndexAndTiming(IndexAndTiming::new(srt_index, timing));
                 }
+                ParseState::IndexAndTiming(_) => todo!("Accumulate Timing"),
+                ParseState::SubtitleUnit(_) => todo!("Build full subtitle unit"),
             }
         }
     }
