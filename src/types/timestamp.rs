@@ -14,7 +14,7 @@ pub struct Timestamp {
     pub milliseconds: u16,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TimestampError {
     EmptyString,
     MalformedTimestamp(String),

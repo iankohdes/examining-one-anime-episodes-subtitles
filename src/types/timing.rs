@@ -15,7 +15,7 @@ pub struct Timing {
     pub end: Timestamp,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TimingError {
     EmptyTiming,
     MalformedTiming(String),
