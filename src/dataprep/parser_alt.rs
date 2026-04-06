@@ -62,9 +62,9 @@ impl From<TimingError> for ParserError {
 
 impl Parser {
     pub fn parse(reader: BufReader<File>) -> Result<Vec<SubtitleUnit>, ParserError> {
-        let parsed_input: Vec<SubtitleUnit> = Vec::new();
+        let mut parsed_input: Vec<SubtitleUnit> = Vec::new();
         let lines = reader.lines();
-        let state = Self::Empty;
+        let mut state = Self::Empty;
 
         for line in lines {
             let unwrapped_line = match line {
@@ -73,12 +73,14 @@ impl Parser {
             };
 
             if unwrapped_line.is_empty() { return Err(ParserError::EmptyFile); }
+
+            state = state.next_state(&mut parsed_input, &unwrapped_line)?;
         }
 
         Ok(parsed_input)
     }
 
-    fn next_state(self, mut accumulator: Vec<SubtitleUnit>, raw_content: &String) -> Result<Self, ParserError> {
+    fn next_state(self, accumulator: &mut Vec<SubtitleUnit>, raw_content: &String) -> Result<Self, ParserError> {
         match self {
             Parser::Empty => {
                 let index = raw_content.parse::<SrtIndex>()?;
