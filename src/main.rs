@@ -56,8 +56,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     //     println!("{}", unwrapped_line);
     // }
     let parsed_data = Parser::parse(lines).unwrap();
-
-    // println!("{:?}", parsed_data);
+    println!("{:?}", parsed_data);
 
     // let mut parser = SubtitleParser::new();
 

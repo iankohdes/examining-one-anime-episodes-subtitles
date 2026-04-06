@@ -41,7 +41,6 @@ pub enum Parser {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParserError {
-    EmptyFile,
     ReadError(String),
     IllegalStateAndInput(String),
     IndexParseError(SrtIndexError),
@@ -71,8 +70,6 @@ impl Parser {
                 Err(e) => return Err(ParserError::ReadError(String::from("Could not read content; please check file"))),
             };
 
-            if unwrapped_line.is_empty() { return Err(ParserError::EmptyFile); }
-
             state = state.next_state(&mut parsed_input, &unwrapped_line)?;
         }
 
@@ -82,13 +79,15 @@ impl Parser {
     fn next_state(self, accumulator: &mut Vec<SubtitleUnit>, raw_content: &String) -> Result<Self, ParserError> {
         match self {
             Parser::Empty => {
-                let index = raw_content.parse::<SrtIndex>()?;
-                println!("Parsed: {raw_content}");
-                Ok(Self::IndexOnly(index))
+                if raw_content.is_empty() {
+                    Ok(Self::Empty)
+                } else {
+                    let index = raw_content.parse::<SrtIndex>()?;
+                    Ok(Self::IndexOnly(index))
+                }
             }
             Parser::IndexOnly(index) => {
                 let timing = raw_content.parse::<Timing>()?;
-                println!("Parsed: {raw_content}");
                 Ok(Self::IndexAndTiming { index, timing })
             }
             Parser::IndexAndTiming { index, timing } => {
@@ -100,7 +99,6 @@ impl Parser {
                 if raw_content.parse::<Timing>().is_err() {
                     let mut subtitle_vec: Vec<String> = Vec::new();
                     subtitle_vec.push(raw_content.to_string());
-                    println!("Parsed: {raw_content}");
                     Ok(Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)))
                 } else {
                     Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input):\n{raw_content}")))
@@ -109,7 +107,6 @@ impl Parser {
             Parser::Complete(mut subtitle_unit) => {
                 if raw_content.is_empty() {
                     accumulator.push(subtitle_unit);
-                    println!("Parsed: {raw_content}");
                     Ok(Self::Empty)  // Reset condition
                 } else if raw_content.parse::<Timing>().is_err() {
                     subtitle_unit.lines.push(raw_content.to_string());
