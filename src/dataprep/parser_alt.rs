@@ -103,9 +103,9 @@ impl Parser {
                 }
             }
             Parser::Complete(mut subtitle_unit) => {
-                if raw_content.is_empty() { Ok(Self::Empty) }  // Current line is blank: append to accumulator
-
-                if raw_content.parse::<Timing>().is_err() {
+                if raw_content.is_empty() {
+                    Ok(Self::Empty)
+                } else if raw_content.parse::<Timing>().is_err() {
                     subtitle_unit.lines.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)))
                 } else {
