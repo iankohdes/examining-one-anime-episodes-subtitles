@@ -1,7 +1,7 @@
 use std::cmp::PartialEq;
 use std::fmt::Display;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Lines};
 use crate::dataprep::parser::{SubtitleParser, SubtitleParserError};
 use crate::types::srt_index::{SrtIndex, SrtIndexError};
 use crate::types::subtitle_unit::SubtitleUnit;
@@ -32,7 +32,7 @@ use crate::types::timing::{Timing, TimingError};
 /// I may install the appropriate crate for the Mermaid diagram at a later time, so that it is directly
 /// viewable in the Cargo-generated documentation.
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum Parser {
+pub enum Parser {
     Empty,
     IndexOnly(SrtIndex),
     IndexAndTiming { index: SrtIndex, timing: Timing },
@@ -40,7 +40,7 @@ enum Parser {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum ParserError {
+pub enum ParserError {
     EmptyFile,
     ReadError(String),
     IllegalStateAndInput(String),
@@ -61,9 +61,8 @@ impl From<TimingError> for ParserError {
 }
 
 impl Parser {
-    pub fn parse(reader: BufReader<File>) -> Result<Vec<SubtitleUnit>, ParserError> {
+    pub fn parse(lines: Lines<BufReader<File>>) -> Result<Vec<SubtitleUnit>, ParserError> {
         let mut parsed_input: Vec<SubtitleUnit> = Vec::new();
-        let lines = reader.lines();
         let mut state = Self::Empty;
 
         for line in lines {

@@ -19,6 +19,10 @@ use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::srt_index::SrtIndex;
 use crate::types::timing::Timing;
 
+// PARSER
+use dataprep::parser_alt::{Parser};
+use crate::dataprep::parser_alt;
+
 /// ingest_subtitle_file :: FilePath -> [SubtitleUnit]
 ///
 /// ingest_subtitle_file :: BufReader T => T -> [SubtitleUnit]
@@ -46,7 +50,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(checked_path_result)?;
     let reader = BufReader::new(file);
 
-    let x = reader.lines();
+    let lines = reader.lines();
+    let parsed_data = Parser::parse(lines).unwrap();
+
+    println!("{:?}", parsed_data);
 
     // let mut parser = SubtitleParser::new();
 
