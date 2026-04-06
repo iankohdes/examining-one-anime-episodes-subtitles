@@ -7,7 +7,7 @@ use crate::types::srt_index::{SrtIndex, SrtIndexError};
 use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::timing::{Timing, TimingError};
 
-/// `Parser` is a state machine. Here is its state-transition table:
+/// `Parser` is a finite state machine. Here is its state-transition table:
 ///
 /// | Current state | Input: *digit* | Input: *timestamps* | Input: *text* | Input: *blank line* | Input: *no more lines* |
 /// | ------------- | -------------- | ------------------- | ------------- | ------------------- | ---------------------- |
@@ -101,7 +101,7 @@ impl Parser {
                     subtitle_vec.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)))
                 } else {
-                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input):\n{raw_content}")))
+                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input): {raw_content}")))
                 }
             }
             Parser::Complete(mut subtitle_unit) => {
@@ -112,7 +112,7 @@ impl Parser {
                     subtitle_unit.lines.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)))
                 } else {
-                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input):\n{raw_content}")))
+                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input): {raw_content}")))
                 }
             }
         }

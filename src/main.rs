@@ -51,11 +51,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let reader = BufReader::new(file);
 
     let lines = reader.lines();
-    // for line in lines {
-    //     let unwrapped_line = line?;
-    //     println!("{}", unwrapped_line);
-    // }
-    let parsed_data = Parser::parse(lines).unwrap();
+    let parsed_data = Parser::parse(lines)?;
+
     println!("{:?}", parsed_data);
 
     // let mut parser = SubtitleParser::new();
