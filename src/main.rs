@@ -45,15 +45,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     //
     // Note: SubtitleParser has stubbed convenience methods parse_file() and parse_str()
     // that will handle this setup internally once implemented. You can give it a shot!
-    let filepath = "data/raw/psycho-pass-s01e01-jp.srt";
+    let filepath = "data/raw/fixture.srt";
     let checked_path_result = SafeFilePath::try_from(filepath)?;
     let file = File::open(checked_path_result)?;
     let reader = BufReader::new(file);
 
     let lines = reader.lines();
+    // for line in lines {
+    //     let unwrapped_line = line?;
+    //     println!("{}", unwrapped_line);
+    // }
     let parsed_data = Parser::parse(lines).unwrap();
 
-    println!("{:?}", parsed_data);
+    // println!("{:?}", parsed_data);
 
     // let mut parser = SubtitleParser::new();
 

@@ -83,10 +83,12 @@ impl Parser {
         match self {
             Parser::Empty => {
                 let index = raw_content.parse::<SrtIndex>()?;
+                println!("Parsed: {raw_content}");
                 Ok(Self::IndexOnly(index))
             }
             Parser::IndexOnly(index) => {
                 let timing = raw_content.parse::<Timing>()?;
+                println!("Parsed: {raw_content}");
                 Ok(Self::IndexAndTiming { index, timing })
             }
             Parser::IndexAndTiming { index, timing } => {
@@ -98,6 +100,7 @@ impl Parser {
                 if raw_content.parse::<Timing>().is_err() {
                     let mut subtitle_vec: Vec<String> = Vec::new();
                     subtitle_vec.push(raw_content.to_string());
+                    println!("Parsed: {raw_content}");
                     Ok(Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)))
                 } else {
                     Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input):\n{raw_content}")))
@@ -106,6 +109,7 @@ impl Parser {
             Parser::Complete(mut subtitle_unit) => {
                 if raw_content.is_empty() {
                     accumulator.push(subtitle_unit);
+                    println!("Parsed: {raw_content}");
                     Ok(Self::Empty)  // Reset condition
                 } else if raw_content.parse::<Timing>().is_err() {
                     subtitle_unit.lines.push(raw_content.to_string());
