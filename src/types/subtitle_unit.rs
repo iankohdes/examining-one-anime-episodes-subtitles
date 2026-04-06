@@ -20,5 +20,21 @@ use crate::types::timing::Timing;
 pub struct SubtitleUnit {
     pub index: SrtIndex,
     pub timing: Timing,
-    pub lines: Vec<String>
+    pub lines: Vec<String>,
+}
+
+impl SubtitleUnit {
+    pub fn new(index: SrtIndex, timing: Timing, lines: Vec<String>) -> Self {
+        SubtitleUnit {
+            index,
+            timing,
+            lines,
+        }
+    }
+
+    // pub fn update_lines(mut current: Self, line_to_add: String) -> Self {
+    //     let updated_lines = current.lines.push(line_to_add);
+    //     let current.lines = updated_lines;
+    //     current
+    // }
 }

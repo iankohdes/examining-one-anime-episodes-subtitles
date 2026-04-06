@@ -6,7 +6,6 @@ use crate::dataprep::parser::{SubtitleParser, SubtitleParserError};
 use crate::types::srt_index::{SrtIndex, SrtIndexError};
 use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::timing::{Timing, TimingError};
-use crate::types::parse_state::{IndexAndTiming, IndexOnly, ParseState};
 
 /// `Parser` is a state machine. Here is its state-transition table:
 ///
@@ -49,11 +48,23 @@ enum ParserError {
     TimingParseError(TimingError),
 }
 
+impl From<SrtIndexError> for ParserError {
+    fn from(err: SrtIndexError) -> Self {
+        ParserError::IndexParseError(err)
+    }
+}
+
+impl From<TimingError> for ParserError {
+    fn from(err: TimingError) -> Self {
+        ParserError::TimingParseError(err)
+    }
+}
+
 impl Parser {
     pub fn parse(reader: BufReader<File>) -> Result<Vec<SubtitleUnit>, ParserError> {
         let parsed_input: Vec<SubtitleUnit> = Vec::new();
         let lines = reader.lines();
-        let mut state = Self::Empty;
+        let state = Self::Empty;
 
         for line in lines {
             let unwrapped_line = match line {
@@ -62,25 +73,46 @@ impl Parser {
             };
 
             if unwrapped_line.is_empty() { return Err(ParserError::EmptyFile); }
-
-            todo!("Implement parsing logic using the transition method defined below")
         }
 
         Ok(parsed_input)
     }
 
-    // Actually, I only need one function to do all the work of the below three! I can call it `.next_state()`.
-    fn transition_to_index_only(self, raw_content: &String) -> Result<Self, ParserError> {
-        // To ask: why am I using `self` instead of `&self`?
-        todo!("Implement transition to index; note that `IndexOnly` can hold a value, so I don’t have to return `SrtIndex` explicitly")
-    }
+    fn next_state(self, raw_content: &String) -> Result<Self, ParserError> {
+        match self {
+            Parser::Empty => {
+                let index = raw_content.parse::<SrtIndex>()?;
+                Ok(Self::IndexOnly(index))
+            }
+            Parser::IndexOnly(index) => {
+                let timing = raw_content.parse::<Timing>()?;
+                Ok(Self::IndexAndTiming { index, timing })
+            }
+            Parser::IndexAndTiming { index, timing } => {
+                // We do not test if `raw_content` can be parsed into an `SrtIndex`, because it’s very
+                // possible that a subtitle contains just a number. If we are, however, successfully
+                // able to parse `raw_content` into a `Timing` instance at this point, then this is
+                // unexpected data and should be raised to the user. (It is reasonable to assume that
+                // viewers don’t expect their subtitles to show timestamps.)
+                if raw_content.parse::<Timing>().is_err() {
+                    let mut subtitle_vec: Vec<String> = Vec::new();
+                    subtitle_vec.push(raw_content.to_string());
+                    Ok(Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)))
+                } else {
+                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input):\n{raw_content}")))
+                }
+            }
+            Parser::Complete(mut subtitle_unit) => {
+                if raw_content.is_empty() { Ok(Self::Empty) }  // Current line is blank: append to accumulator
 
-    fn transition_to_index_and_timing(self, raw_content: &String) -> Result<Self, ParserError> {
-        todo!("Implement transition to `IndexAndTiming`")
-    }
-
-    fn transition_to_complete(self, raw_content: &String) -> Result<Self, ParserError> {
-        todo!("Implement transition to `Complete`")
+                if raw_content.parse::<Timing>().is_err() {
+                    subtitle_unit.lines.push(raw_content.to_string());
+                    Ok(Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)))
+                } else {
+                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input):\n{raw_content}")))
+                }
+            }
+        }
     }
 }
 
