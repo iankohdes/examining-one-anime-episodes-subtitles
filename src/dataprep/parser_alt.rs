@@ -78,7 +78,7 @@ impl Parser {
         Ok(parsed_input)
     }
 
-    fn next_state(self, raw_content: &String) -> Result<Self, ParserError> {
+    fn next_state(self, mut accumulator: Vec<SubtitleUnit>, raw_content: &String) -> Result<Self, ParserError> {
         match self {
             Parser::Empty => {
                 let index = raw_content.parse::<SrtIndex>()?;
@@ -104,7 +104,8 @@ impl Parser {
             }
             Parser::Complete(mut subtitle_unit) => {
                 if raw_content.is_empty() {
-                    Ok(Self::Empty)
+                    accumulator.push(subtitle_unit);
+                    Ok(Self::Empty)  // Reset condition
                 } else if raw_content.parse::<Timing>().is_err() {
                     subtitle_unit.lines.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)))
