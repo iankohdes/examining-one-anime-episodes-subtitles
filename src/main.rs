@@ -23,16 +23,6 @@ use crate::types::timing::Timing;
 use dataprep::parser_alt::{Parser};
 use crate::dataprep::parser_alt;
 
-/// ingest_subtitle_file :: FilePath -> [SubtitleUnit]
-///
-/// ingest_subtitle_file :: BufReader T => T -> [SubtitleUnit]
-///
-/// ingest_subtitle_file_v2 :: [] -> [SubtitleUnit]
-/// {
-///     index: int32,
-///     raw_content: &str
-/// }
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // We need this SafeFilePath -> File -> BufReader chain because:
     // 1. SafeFilePath validates the path (correct extension, no path traversal, file exists)
@@ -51,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let reader = BufReader::new(file);
 
     let lines = reader.lines();
-    let parsed_data = Parser::parse(lines)?;
+    let parsed_data = Parser::parse(lines).unwrap();
 
     println!("{:?}", parsed_data);
 
