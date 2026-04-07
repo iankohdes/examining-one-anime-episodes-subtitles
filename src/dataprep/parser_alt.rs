@@ -73,6 +73,12 @@ impl Parser {
             state = state.next_state(&mut parsed_input, &unwrapped_line)?;
         }
 
+        // Relevant for the case where a subtitle file doesn’t end with a blank line
+        match state {
+            Self::Complete(subtitle_unit) => parsed_input.push(subtitle_unit),
+            _ => {}
+        }
+
         Ok(parsed_input)
     }
 
