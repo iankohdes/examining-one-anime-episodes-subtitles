@@ -61,7 +61,7 @@ impl From<TimingError> for ParserError {
 
 impl Parser {
     pub fn parse(lines: Lines<BufReader<File>>) -> Result<Vec<SubtitleUnit>, ParserError> {
-        let mut parsed_input: Vec<SubtitleUnit> = Vec::new();
+        let mut parsed_input = Vec::new();
         let mut state = Self::Empty;
 
         for line in lines {
@@ -101,7 +101,7 @@ impl Parser {
                     subtitle_vec.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)))
                 } else {
-                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input): {raw_content}")))
+                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
                 }
             }
             Parser::Complete(mut subtitle_unit) => {
@@ -112,7 +112,7 @@ impl Parser {
                     subtitle_unit.lines.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)))
                 } else {
-                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input): {raw_content}")))
+                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
                 }
             }
         }
