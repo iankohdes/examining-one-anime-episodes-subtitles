@@ -19,6 +19,8 @@ pub enum SrtIndexError {
     IndexContainsDisallowedChars(String),
 }
 
+// Implement Error trait and Display trait -- all error types should both traits.
+
 impl FromStr for SrtIndex {
     type Err = SrtIndexError;
 

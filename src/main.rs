@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let reader = BufReader::new(file);
 
     let lines = reader.lines();
-    let parsed_data = Parser::parse(lines).unwrap();
+    let parsed_data = Parser::parse(lines)?;
 
     println!("{:?}", parsed_data);
 

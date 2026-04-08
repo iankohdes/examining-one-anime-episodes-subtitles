@@ -1,8 +1,9 @@
 use std::cmp::PartialEq;
-use std::fmt::Display;
+use std::error::Error;
+use std::fmt::{Display, Formatter};
 use std::fs::File;
 use std::io::{BufRead, BufReader, Lines};
-use crate::dataprep::parser::{SubtitleParser, SubtitleParserError};
+use crate::dataprep::parser::{ParseResult, SubtitleParser, SubtitleParserError};
 use crate::types::srt_index::{SrtIndex, SrtIndexError};
 use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::timing::{Timing, TimingError};
@@ -45,6 +46,30 @@ pub enum ParserError {
     IllegalStateAndInput(String),
     IndexParseError(SrtIndexError),
     TimingParseError(TimingError),
+}
+
+impl Display for ParserError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        // write!(f, "Something bad happened")
+        match self {
+            ParserError::ReadError(filename) => {
+                write!(f, "Error while reading file: {filename}")
+            }
+            ParserError::IllegalStateAndInput(msg) => {
+                write!(f, "Some illegal input received: {msg}")
+            }
+            ParserError::IndexParseError(msg) => {
+                write!(f, "Incorrect format of subtitle index: {msg:?}")  // Debug printing option to avoid having to implement Display and Error; not advisable for production code
+            }
+            ParserError::TimingParseError(msg) => {
+                write!(f, "Incorrect format of timestamp(s): {msg:?}")
+            }
+        }
+    }
+}
+
+impl Error for ParserError {
+
 }
 
 impl From<SrtIndexError> for ParserError {
