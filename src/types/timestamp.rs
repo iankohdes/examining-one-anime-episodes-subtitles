@@ -152,7 +152,6 @@ impl FromStr for Timestamp {
         }
         let milliseconds = raw_ms.parse::<usize>().unwrap();
         if milliseconds > U16_MAX_65535 {
-            println!("regarding timestamp string: {}", s);
             return Err(TimestampError::malformed(
                 "milliseconds value exceeds maximum unsigned 16-bit value of 65535",
                 s,
