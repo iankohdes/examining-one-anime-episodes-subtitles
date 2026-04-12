@@ -19,15 +19,9 @@ use crate::types::subtitle_unit::SubtitleUnit;
 use crate::types::srt_index::SrtIndex;
 use crate::types::timing::Timing;
 
-/// ingest_subtitle_file :: FilePath -> [SubtitleUnit]
-///
-/// ingest_subtitle_file :: BufReader T => T -> [SubtitleUnit]
-///
-/// ingest_subtitle_file_v2 :: [] -> [SubtitleUnit]
-/// {
-///     index: int32,
-///     raw_content: &str
-/// }
+// PARSER
+use dataprep::parser_alt::{Parser};
+use crate::dataprep::parser_alt;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // We need this SafeFilePath -> File -> BufReader chain because:
@@ -41,12 +35,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     //
     // Note: SubtitleParser has stubbed convenience methods parse_file() and parse_str()
     // that will handle this setup internally once implemented. You can give it a shot!
-    let filepath = "data/raw/psycho-pass-s01e01-jp.srt";
+    let filepath = "data/raw/fixture.srt";
     let checked_path_result = SafeFilePath::try_from(filepath)?;
     let file = File::open(checked_path_result)?;
     let reader = BufReader::new(file);
 
-    let x = reader.lines();
+    let lines = reader.lines();
+    let parsed_data = Parser::parse(lines)?;
+
+    println!("{:?}", parsed_data);
 
     // let mut parser = SubtitleParser::new();
 
