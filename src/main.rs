@@ -5,23 +5,16 @@
 mod dataprep;
 mod types;
 
-use dataprep::cleaning::{clean_subtitles, helper_dedupe_and_sort};
-use dataprep::parser::SubtitleParser;
 use serde::Deserialize;
-use std::collections::{BTreeSet, HashMap};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::str::FromStr;
-use std::{env, fs};
 
 use crate::dataprep::ingestion::SafeFilePath;
-use crate::types::subtitle_unit::SubtitleUnit;
-use crate::types::srt_index::SrtIndex;
-use crate::types::timing::Timing;
 
 // PARSER
 use dataprep::parser_alt::{Parser};
-use crate::dataprep::parser_alt;
+use crate::types::timestamp::{Timestamp, TimestampError};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // We need this SafeFilePath -> File -> BufReader chain because:
@@ -43,7 +36,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let lines = reader.lines();
     let parsed_data = Parser::parse(lines)?;
 
-    println!("{:?}", parsed_data);
+    // println!("{:?}", parsed_data);
+
+    let x = "00:01:14,324";
+    let timestamp_x = x.parse::<Timestamp>();
+    match timestamp_x {
+        Ok(s) => { println!("{s}"); }
+        Err(e) => { println!("{e}"); }
+    }
 
     // let mut parser = SubtitleParser::new();
 
