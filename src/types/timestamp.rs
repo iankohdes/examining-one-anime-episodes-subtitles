@@ -18,7 +18,7 @@ pub struct Timestamp {
 
 impl Display for Timestamp {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{:02}:{:02} {:03}", self.hours, self.minutes, self.seconds, self.milliseconds)
+        write!(f, "{}:{:02}:{:02} {:03} (hours:minutes:seconds milliseconds)", self.hours, self.minutes, self.seconds, self.milliseconds)
     }
 }
 
