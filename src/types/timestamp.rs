@@ -38,10 +38,10 @@ impl Display for TimestampError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             TimestampError::EmptyString => {
-                write!(f, "Timestamp string should not be empty")
+                write!(f, "timestamp string should not be empty")
             }
             TimestampError::MalformedTimestamp(s) => {
-                write!(f, "{}", format!("Malformed timestamp: {s}"))
+                write!(f, "{}", format!("malformed timestamp: {s}"))
             }
         }
     }
