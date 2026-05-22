@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use crate::types::timestamp;
 use crate::types::timestamp::{Timestamp, TimestampError};
 use std::str::FromStr;
@@ -25,6 +26,22 @@ pub enum TimingError {
 impl TimingError {
     pub fn malformed(msg: &str, original_input: &str) -> Self {
         TimingError::MalformedTiming(format!("{} (input: {})", msg, original_input))
+    }
+}
+
+impl Display for TimingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TimingError::EmptyTiming => {
+                write!(f, "No start and end timestamps found")
+            }
+            TimingError::MalformedTiming(string) => {
+                write!(f, "Malformed timing string: {string}")
+            }
+            TimingError::Timestamp(timestamp_error) => {
+                write!(f, "{timestamp_error}")
+            }
+        }
     }
 }
 
