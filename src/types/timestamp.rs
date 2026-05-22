@@ -1,3 +1,5 @@
+use std::error::Error;
+use std::fmt::Display;
 use std::str::FromStr;
 
 const PERMITTED_TIMESTAMP_CHARS: &str = "0123456789:,";
@@ -14,6 +16,12 @@ pub struct Timestamp {
     pub milliseconds: u16,
 }
 
+impl Display for Timestamp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{:02}:{:02} {:03} (hours:minutes:seconds milliseconds)", self.hours, self.minutes, self.seconds, self.milliseconds)
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TimestampError {
     EmptyString,
@@ -25,6 +33,21 @@ impl TimestampError {
         TimestampError::MalformedTimestamp(format!("{} (input string: {})", msg, original_input))
     }
 }
+
+impl Display for TimestampError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TimestampError::EmptyString => {
+                write!(f, "timestamp string should not be empty")
+            }
+            TimestampError::MalformedTimestamp(s) => {
+                write!(f, "{}", format!("malformed timestamp: {s}"))
+            }
+        }
+    }
+}
+
+impl Error for TimestampError {}
 
 impl FromStr for Timestamp {
     type Err = TimestampError;
@@ -39,12 +62,12 @@ impl FromStr for Timestamp {
             return Err(TimestampError::EmptyString);
         } else if count_char_occurrences(s, ',') != 1 {
             return Err(TimestampError::malformed(
-                "Timestamp string can’t have more than one comma as a millisecond separator",
+                "timestamp string can’t have multiple commas as a millisecond separator",
                 s,
             ));
         } else if s.contains("\n") {
             return Err(TimestampError::malformed(
-                "Timestamp string cannot contain newlines",
+                "timestamp string cannot contain newlines",
                 s,
             ));
         } else if s
@@ -53,7 +76,7 @@ impl FromStr for Timestamp {
             == false
         {
             return Err(TimestampError::malformed(
-                "Illegal characters detected; allowed characters are 0123456789:,",
+                "illegal characters detected; allowed characters are 0123456789:,",
                 s,
             ));
         }
@@ -66,7 +89,7 @@ impl FromStr for Timestamp {
         let split_hh_mm_ss: Vec<&str> = raw_hh_mm_ss.split(":").collect();
         if split_hh_mm_ss.len() != 3 {
             return Err(TimestampError::malformed(
-                "Timestamp must have properly defined HH:MM:SS component",
+                "timestamp must have properly defined HH:MM:SS component",
                 s,
             ));
         }
@@ -76,27 +99,27 @@ impl FromStr for Timestamp {
         let raw_ss = split_hh_mm_ss[2];
         if raw_hh.is_empty() {
             return Err(TimestampError::malformed(
-                "Empty hours value in HH:MM:SS",
+                "empty hours value in HH:MM:SS",
                 s,
             ));
         } else if raw_mm.is_empty() {
             return Err(TimestampError::malformed(
-                "Empty minutes value in HH:MM:SS",
+                "empty minutes value in HH:MM:SS",
                 s,
             ));
         } else if raw_ss.is_empty() {
             return Err(TimestampError::malformed(
-                "Empty seconds value in HH:MM:SS",
+                "empty seconds value in HH:MM:SS",
                 s,
             ));
         }
 
         let raw_ms = split_on_comma[1];
         if raw_ms.is_empty() {
-            return Err(TimestampError::malformed("Empty milliseconds value", s));
+            return Err(TimestampError::malformed("empty milliseconds value", s));
         } else if count_char_occurrences(raw_ms, ':') > 0 {
             return Err(TimestampError::malformed(
-                "Milliseconds component contains illegal colon character",
+                "milliseconds component contains illegal colon character",
                 s,
             ));
         }
@@ -105,38 +128,37 @@ impl FromStr for Timestamp {
         if hours > U8_MAX_255 {
             // Should I increase the allocation to u16?
             return Err(TimestampError::malformed(
-                "Hours value exceeds maximum unsigned 8-bit value of 255",
+                "hours value exceeds maximum unsigned 8-bit value of 255",
                 s,
             ));
         }
         let minutes = raw_mm.parse::<usize>().unwrap();
         if minutes > U8_MAX_255 {
             return Err(TimestampError::malformed(
-                "Minutes value exceeds maximum unsigned 8-bit value of 255",
+                "minutes value exceeds maximum unsigned 8-bit value of 255",
                 s,
             ));
         } else if minutes > 59 {
-            return Err(TimestampError::malformed("Minutes value exceeds 59", s));
+            return Err(TimestampError::malformed("minutes value exceeds 59", s));
         }
         let seconds = raw_ss.parse::<usize>().unwrap();
         if seconds > U8_MAX_255 {
             return Err(TimestampError::malformed(
-                "Seconds value exceeds maximum unsigned 8-bit value of 255",
+                "seconds value exceeds maximum unsigned 8-bit value of 255",
                 s,
             ));
         } else if seconds > 59 {
-            return Err(TimestampError::malformed("Seconds value exceeds 59", s));
+            return Err(TimestampError::malformed("seconds value exceeds 59", s));
         }
         let milliseconds = raw_ms.parse::<usize>().unwrap();
         if milliseconds > U16_MAX_65535 {
-            println!("Regarding timestamp string: {}", s);
             return Err(TimestampError::malformed(
-                "Milliseconds value exceeds maximum unsigned 16-bit value of 65535",
+                "milliseconds value exceeds maximum unsigned 16-bit value of 65535",
                 s,
             ));
         } else if milliseconds > 999 {
             return Err(TimestampError::malformed(
-                "Milliseconds value exceeds 999",
+                "milliseconds value exceeds 999",
                 s,
             ));
         }

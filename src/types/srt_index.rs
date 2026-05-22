@@ -1,3 +1,4 @@
+use std::fmt::{write, Display};
 use std::str::FromStr;
 
 const PERMITTED_INDEX_CHARS: &str = "0123456789";
@@ -17,6 +18,22 @@ pub enum SrtIndexError {
     EmptyIndex,
     IndexExceedsMaxU32Size(String),
     IndexContainsDisallowedChars(String),
+}
+
+impl Display for SrtIndexError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SrtIndexError::EmptyIndex => {
+                write!(f, "SRT index (integer) is empty")
+            }
+            SrtIndexError::IndexExceedsMaxU32Size(string) => {
+                write!(f, "Index {string} exceeds max u32 size")
+            }
+            SrtIndexError::IndexContainsDisallowedChars(string) => {
+                write!(f, "Index {string} contains non-numeric characters")
+            }
+        }
+    }
 }
 
 // Implement Error trait and Display trait -- all error types should both traits.
