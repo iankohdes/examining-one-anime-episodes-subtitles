@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 use std::fmt::Display;
+=======
+use std::error::Error;
+use std::fmt::{Display, Formatter};
+>>>>>>> 6684385448e6726a9d4c2da050143d5dd5febdbc
 use crate::types::timestamp;
 use crate::types::timestamp::{Timestamp, TimestampError};
 use std::str::FromStr;
@@ -14,6 +19,12 @@ const TIMING_SEPARATOR: &str = "-->";
 pub struct Timing {
     pub start: Timestamp,
     pub end: Timestamp,
+}
+
+impl Display for Timing {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} -> {}", self.start, self.end)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -44,6 +55,7 @@ impl Display for TimingError {
         }
     }
 }
+impl Error for TimingError {}
 
 impl From<TimestampError> for TimingError {
     // This allows me to convert a `TimestampError` to a `TimingError` using the `parse` function. Although
@@ -68,11 +80,11 @@ impl FromStr for Timing {
 
         if split_s_elems == 1 {
             return Err(TimingError::malformed(
-                "Missing timestamp separator (-->)",
+                "missing timestamp separator (-->)",
                 s,
             ));
         } else if split_s_elems > 2 {
-            return Err(TimingError::malformed("Multiple timestamp separators", s));
+            return Err(TimingError::malformed("multiple timestamp separators", s));
         }
 
         let start_raw: &str = split_s_collected[0].trim();
@@ -83,7 +95,7 @@ impl FromStr for Timing {
 
         if start_timestamp > end_timestamp {
             return Err(TimingError::malformed(
-                "Start timestamp is later than end timestamp",
+                "start timestamp is later than end timestamp",
                 s,
             ));
         }
@@ -121,12 +133,12 @@ mod tests {
         let input = "00:18:25,437 00:18:27,439";
         let result = input.parse::<Timing>();
         let expected_error_msg =
-            "Missing timestamp separator (-->) (input: 00:18:25,437 00:18:27,439)";
+            "missing timestamp separator (-->) (input: 00:18:25,437 00:18:27,439)";
 
         assert!(result.is_err());
         match result.unwrap_err() {
             TimingError::MalformedTiming(msg) => assert_eq!(msg, expected_error_msg),
-            _ => panic!("Expected this error message: Missing timestamp separator (-->)"),
+            _ => panic!("Expected this error message: missing timestamp separator (-->)"),
         }
     }
 }

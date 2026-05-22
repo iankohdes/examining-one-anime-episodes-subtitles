@@ -15,6 +15,7 @@ use crate::dataprep::ingestion::SafeFilePath;
 // PARSER
 use dataprep::parser_alt::{Parser};
 use crate::types::timestamp::{Timestamp, TimestampError};
+use crate::types::timing::{Timing, TimingError};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // We need this SafeFilePath -> File -> BufReader chain because:
@@ -38,11 +39,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // println!("{:?}", parsed_data);
 
-    let x = "00:01:14,324";
-    let timestamp_x = x.parse::<Timestamp>();
-    match timestamp_x {
-        Ok(s) => { println!("{s}"); }
-        Err(e) => { println!("{e}"); }
+    let x = "00:01:14,324 --> 00:01:85,145";
+    let timing_x = x.parse::<Timing>();
+    match timing_x {
+        Ok(s) => {println!("{s}")}
+        Err(s) => {println!("{s}")}
     }
 
     // let mut parser = SubtitleParser::new();
