@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-use std::fmt::Display;
-=======
 use std::error::Error;
 use std::fmt::{Display, Formatter};
->>>>>>> 6684385448e6726a9d4c2da050143d5dd5febdbc
 use crate::types::timestamp;
 use crate::types::timestamp::{Timestamp, TimestampError};
 use std::str::FromStr;
