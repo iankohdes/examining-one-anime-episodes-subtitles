@@ -31,13 +31,13 @@ impl Display for PathError {
     // unwrap the output of `SafeFilePath::try_from`.
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            PathError::EmptyPath => write!(f, "File path is empty"),
-            PathError::FileNotFound => write!(f, "File not found"),
+            PathError::EmptyPath => write!(f, "file path is empty"),
+            PathError::FileNotFound => write!(f, "file not found"),
             PathError::IllegalCharacters => write!(
                 f,
-                "Characters must be:\n ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./"
+                "characters must be:\n ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./"
             ),
-            PathError::IncorrectExtension => write!(f, "File extension is not .srt"),
+            PathError::IncorrectExtension => write!(f, "file extension is not .srt"),
         }
     }
 }

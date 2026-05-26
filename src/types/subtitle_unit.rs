@@ -31,10 +31,4 @@ impl SubtitleUnit {
             lines,
         }
     }
-
-    // pub fn update_lines(mut current: Self, line_to_add: String) -> Self {
-    //     let updated_lines = current.lines.push(line_to_add);
-    //     let current.lines = updated_lines;
-    //     current
-    // }
 }

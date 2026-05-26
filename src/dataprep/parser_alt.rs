@@ -52,16 +52,16 @@ impl Display for ParserError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ParserError::ReadError(filename) => {
-                write!(f, "Error while reading file: {filename}")
+                write!(f, "error while reading file: {filename}")
             }
             ParserError::IllegalStateAndInput(msg) => {
-                write!(f, "Some illegal input received: {msg}")
+                write!(f, "some illegal input received: {msg}")
             }
             ParserError::IndexParseError(msg) => {
-                write!(f, "Incorrect format of subtitle index: {msg}")
+                write!(f, "incorrect format of subtitle index: {msg}")
             }
             ParserError::TimingParseError(msg) => {
-                write!(f, "Incorrect format of timestamp(s): {msg}")
+                write!(f, "incorrect format of timestamp(s): {msg}")
             }
         }
     }
@@ -89,7 +89,7 @@ impl Parser {
         for line in lines {
             let unwrapped_line = match line {
                 Ok(raw_content) => raw_content,
-                Err(e) => return Err(ParserError::ReadError(String::from("Could not read content; please check file"))),
+                Err(e) => return Err(ParserError::ReadError(String::from("could not read content; please check file"))),
             };
 
             state = state.next_state(&mut parsed_input, &unwrapped_line)?;
@@ -129,7 +129,7 @@ impl Parser {
                     subtitle_vec.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)))
                 } else {
-                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
+                    Err(ParserError::IllegalStateAndInput(format!("possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
                 }
             }
             Parser::Complete(mut subtitle_unit) => {
@@ -140,7 +140,7 @@ impl Parser {
                     subtitle_unit.lines.push(raw_content.to_string());
                     Ok(Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)))
                 } else {
-                    Err(ParserError::IllegalStateAndInput(format!("Possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
+                    Err(ParserError::IllegalStateAndInput(format!("possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
                 }
             }
         }
