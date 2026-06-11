@@ -32,8 +32,9 @@ use crate::types::timing::{Timing, TimingError};
 ///
 /// I may install the appropriate crate for the Mermaid diagram at a later time, so that it is directly
 /// viewable in the Cargo-generated documentation.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub enum Parser {
+    #[default]
     Empty,
     IndexOnly(SrtIndex),
     IndexAndTiming { index: SrtIndex, timing: Timing },
@@ -104,19 +105,19 @@ impl Parser {
         Ok(parsed_input)
     }
 
-    fn next_state(self, accumulator: &mut Vec<SubtitleUnit>, raw_content: &String) -> Result<Self, ParserError> {
+    fn next_state(self, raw_content: &String) -> Result<(Self, Option<SubtitleUnit>), ParserError> {
         match self {
             Parser::Empty => {
                 if raw_content.is_empty() {
-                    Ok(Self::Empty)
+                    Ok((Self::Empty, None))
                 } else {
                     let index = raw_content.parse::<SrtIndex>()?;
-                    Ok(Self::IndexOnly(index))
+                    Ok((Self::IndexOnly(index), None))
                 }
             }
             Parser::IndexOnly(index) => {
                 let timing = raw_content.parse::<Timing>()?;
-                Ok(Self::IndexAndTiming { index, timing })
+                Ok((Self::IndexAndTiming { index, timing }, None))
             }
             Parser::IndexAndTiming { index, timing } => {
                 // We do not test if `raw_content` can be parsed into an `SrtIndex`, because it’s very
@@ -127,18 +128,18 @@ impl Parser {
                 if raw_content.parse::<Timing>().is_err() {
                     let mut subtitle_vec: Vec<String> = Vec::new();
                     subtitle_vec.push(raw_content.to_string());
-                    Ok(Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)))
+                    Ok((Self::Complete(SubtitleUnit::new(index, timing, subtitle_vec)), None))
                 } else {
                     Err(ParserError::IllegalStateAndInput(format!("possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
                 }
             }
             Parser::Complete(mut subtitle_unit) => {
                 if raw_content.is_empty() {
-                    accumulator.push(subtitle_unit);
-                    Ok(Self::Empty)  // Reset condition
-                } else if raw_content.parse::<Timing>().is_err() {
+                    // accumulator.push(subtitle_unit);
+                    Ok((Self::Empty, Some(subtitle_unit)))  // Reset condition
+                } else if raw_content.parse::<Timing>().is_err() {  // Read above comment on parsing `Timing` instances in `SubtitleUnit.lines`
                     subtitle_unit.lines.push(raw_content.to_string());
-                    Ok(Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)))
+                    Ok((Self::Complete(SubtitleUnit::new(subtitle_unit.index, subtitle_unit.timing, subtitle_unit.lines)), None))
                 } else {
                     Err(ParserError::IllegalStateAndInput(format!("possible repetition of timestamps (unexpected input; if this is desired behaviour, add some text to string to make error go away): {raw_content}")))
                 }
